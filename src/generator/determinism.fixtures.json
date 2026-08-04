@@ -1,0 +1,110 @@
+{
+  "note": "Empreintes du balisage écrit. La GÉOMÉTRIE sous-jacente (branches, positions et tailles de feuilles, cadrage, nomenclature) a été validée par diff octet à octet contre _legacy/Siccus v2.dc.html. Ne jamais régénérer ce fichier pour faire passer un test.",
+  "collectedOn": "2026-08-04T12:00:00Z",
+  "plates": {
+    "Éléa": {
+      "seed": 3297031088,
+      "port": "grimpant",
+      "palette": "fusain",
+      "latin": "Anthepogon robusta",
+      "specimen": 8088,
+      "markup": "73ce2ab7372cc0f6"
+    },
+    "Adrien": {
+      "seed": 2862143470,
+      "port": "rosette",
+      "palette": "sepia",
+      "latin": "Vulpirhiza robusta",
+      "specimen": 9470,
+      "markup": "750b23420cf29f78"
+    },
+    "Ana": {
+      "seed": 2174885503,
+      "port": "rosette",
+      "palette": "sepia",
+      "latin": "Eryarhiza robusta",
+      "specimen": 9503,
+      "markup": "3d9e382ac478e1fb"
+    },
+    "Constantinople": {
+      "seed": 2720249986,
+      "port": "rosette",
+      "palette": "sepia",
+      "latin": "Spermacarpa gracilis",
+      "specimen": 9986,
+      "markup": "d146e037bf876b53"
+    },
+    "siccus": {
+      "seed": 252858942,
+      "port": "grimpant",
+      "palette": "olive",
+      "latin": "Anthespina gracilis",
+      "specimen": 4942,
+      "markup": "94f866fa9080fbb5"
+    },
+    "fougere test": {
+      "seed": 321547615,
+      "port": "fougere",
+      "palette": "fusain",
+      "latin": "Cornirhiza robusta",
+      "specimen": 5615,
+      "markup": "2d5035570f5c79b5"
+    },
+    "olive": {
+      "seed": 1221160052,
+      "port": "fougere",
+      "palette": "olive",
+      "latin": "Antherhiza gracilis",
+      "specimen": 5052,
+      "markup": "223637503b073096"
+    },
+    "graminee x": {
+      "seed": 1792077926,
+      "port": "rosette",
+      "palette": "tabac",
+      "latin": "Antherhiza alterna",
+      "specimen": 7926,
+      "markup": "3441050616e6cb59"
+    },
+    "arbuste": {
+      "seed": 3108312960,
+      "port": "grimpant",
+      "palette": "encre",
+      "latin": "Anthenervia robusta",
+      "specimen": 1960,
+      "markup": "cd3210a5c3384265"
+    },
+    "zzz": {
+      "seed": 2703109331,
+      "port": "fougere",
+      "palette": "sepia",
+      "latin": "Thalafolia contorta",
+      "specimen": 5331,
+      "markup": "8012e2178a9ce6df"
+    },
+    "a": {
+      "seed": 519299066,
+      "port": "arbustif",
+      "palette": "olive",
+      "latin": "Lycospina nana",
+      "specimen": 9066,
+      "markup": "7d9833c94e1455a3"
+    },
+    "Marie-Lou": {
+      "seed": 3086524573,
+      "port": "graminee",
+      "palette": "fusain",
+      "latin": "Caulinervia gracilis",
+      "specimen": 2573,
+      "markup": "cf1e3a38bdbf8145"
+    },
+    "José": {
+      "seed": 3239436999,
+      "port": "arbustif",
+      "palette": "tabac",
+      "latin": "Vulpiphylla robusta",
+      "specimen": 4999,
+      "markup": "7d3cb25ef9019b90"
+    }
+  }
+}

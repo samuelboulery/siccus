@@ -1,0 +1,37 @@
+{
+  "name": "siccus",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Un mot, une planche d'herbier déterministe.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/cedarville-cursive": "^5.2.5",
+    "@fontsource/cormorant-garamond": "^5.2.5",
+    "@fontsource/lora": "^5.2.5",
+    "@fontsource/petit-formal-script": "^5.2.5",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.30.0",
+    "@types/node": "^26.1.2",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.6.0",
+    "eslint": "^9.30.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.35.0",
+    "vite": "^7.0.0",
+    "vitest": "^3.2.4"
+  }
+}
