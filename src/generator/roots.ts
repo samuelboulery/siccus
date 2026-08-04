@@ -22,11 +22,11 @@ export function growRoots(sketch: Sketch, g: Genome, rng: Rng): void {
     for (let i = 0; i < roots; i++) {
       const a = 90 + jit(rng, g.rootSpread)
       const s = stem(jit(rng, 7), 0, a, 34 + rng() * 40, jit(rng, 40), rng, 3.2, 8)
-      sketch.push(s.pts, g.thickness * 0.12, Math.floor(i / 4))
+      sketch.nib(s.pts, g.thickness * 0.12, 0, Math.floor(i / 4))
       if (rng() < 0.55) {
         const anchor = s.pts[4]!
         const b = stem(anchor[0], anchor[1], a + jit(rng, 60), 14 + rng() * 18, jit(rng, 30), rng, 3, 5)
-        sketch.push(b.pts, g.thickness * 0.08, Math.floor(i / 4) + 1)
+        sketch.nib(b.pts, g.thickness * 0.08, 0, Math.floor(i / 4) + 1)
       }
     }
     return

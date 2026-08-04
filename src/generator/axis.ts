@@ -1,7 +1,7 @@
 import { jit, type Rng } from './rng'
 import { stem } from './geometry'
 import type { Sketch } from './sketch'
-import type { Genome, Phyllotaxy } from '../lib/types'
+import type { Genome, Phyllotaxy, Point } from '../lib/types'
 
 /**
  * Le moteur d'axes.
@@ -174,6 +174,12 @@ export function growAxis(
   let section = Math.pow(spec.width, PIPE_EXPONENT)
   let lastWave = spec.wave
 
+  /* L'axe s'accumule et n'est tracé qu'une fois, à la fin, en un seul trait
+     continu. Émettre un ruban par entre-nœud produirait une encoche et un
+     ressaut de largeur à chaque jointure. */
+  const path: Point[] = [[x, y]]
+  const widths: number[] = [spec.width]
+
   for (let i = 0; i < spec.internodes; i++) {
     if (budget.nodes >= MAX_NODES) break
     budget.nodes++
@@ -191,11 +197,27 @@ export function growAxis(
        matière à chaque rameau, et l'amincissement propre de l'axe entre deux
        nœuds. Sans la seconde, un axe peu ramifié garde son épaisseur jusqu'à
        l'apex et se lit comme un tuyau. */
-    const width = Math.pow(section, 1 / PIPE_EXPONENT) * (1 - 0.62 * u)
-    const segment = stem(x, y, angle, length, turn, rng, 1.1, 3)
+    const trunk = Math.pow(section, 1 / PIPE_EXPONENT)
+    const uNext = spec.internodes > 1 ? (i + 1) / (spec.internodes - 1) : 1
+    const last = i === spec.internodes - 1
+    const width = Math.max(0.12, trunk * (1 - 0.62 * u))
+    /* Le dernier entre-nœud s'effile presque en pointe : une ramille terminale
+       ne se termine pas par un bout carré. */
+    const widthEnd = last ? width * 0.22 : Math.max(0.1, trunk * (1 - 0.62 * Math.min(1, uNext)))
+
+    /* Cinq pas par entre-nœud : en dessous, le ruban extrudé devient anguleux et
+       le trait cesse de se lire comme une courbe. */
+    const segment = stem(x, y, angle, length, turn, rng, 1.1, 5)
     const wave = spec.wave + i
 
-    sketch.push(segment.pts, Math.max(0.12, width), wave)
+    /* Les points de l'entre-nœud rejoignent l'axe, avec leur largeur interpolée.
+       Le premier est sauté : c'est le dernier du précédent. */
+    for (let k = 1; k < segment.pts.length; k++) {
+      const f = k / (segment.pts.length - 1)
+      path.push(segment.pts[k]!)
+      widths.push(width + (widthEnd - width) * f)
+    }
+
     if (wave > budget.maxWave) budget.maxWave = wave
     lastWave = wave
 
@@ -276,6 +298,8 @@ export function growAxis(
       }
     }
   }
+
+  sketch.axis(path, widths, spec.wave)
 
   return { x, y, angle, wave: lastWave }
 }

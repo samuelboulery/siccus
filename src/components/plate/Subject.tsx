@@ -11,6 +11,8 @@ type SubjectProps = {
   animated: boolean
   /** Filtre d'encre — jamais pendant la croissance, il coûte 55 fps. */
   inked: boolean
+  /** Préfixe des identifiants de masque, pour cohabiter avec un autre rendu. */
+  idPrefix: string
 }
 
 /**
@@ -22,7 +24,7 @@ type SubjectProps = {
  * individuellement : quatre mille chemins avec chacun son `transition-delay`
  * créent quatre mille couches de composition et tuent le navigateur.
  */
-export function Subject({ plate, animated, inked }: SubjectProps) {
+export function Subject({ plate, animated, inked, idPrefix }: SubjectProps) {
   const { framing, palette, genome } = plate
   const waves = Math.max(1, plate.maxWave)
   const delayOf = (wave: number): number => r2(Math.min(wave, waves) * (GROWTH_SPAN / waves))
@@ -43,34 +45,97 @@ export function Subject({ plate, animated, inked }: SubjectProps) {
 
   return (
     <g>
+      {/* Les masques de croissance. `stroke-dashoffset` ne s'applique pas à un
+          remplissage : un trait de burin est une forme, pas un `stroke`. On le
+          révèle donc à travers un masque construit sur sa ligne médiane, qui,
+          elle, est bien un `stroke` animable.
+          Rien de tout ceci n'existe à l'export, qui n'anime pas. */}
+      {animated && (
+        <defs>
+          {[...byWave].map(([wave, strokes]) => (
+            <mask
+              key={wave}
+              id={`${idPrefix}-grow-${wave}`}
+              maskUnits="userSpaceOnUse"
+              x={-2000}
+              y={-2000}
+              width={4000}
+              height={4000}
+            >
+              <g
+                stroke="#fff"
+                fill="none"
+                strokeLinecap="round"
+                style={grow(wave)}
+                pathLength={1}
+              >
+                {strokes.map((s, i) =>
+                  s.spine ? (
+                    <path
+                      key={i}
+                      d={s.spine}
+                      /* Assez large pour couvrir le ruban qu'elle révèle. */
+                      strokeWidth={r2(s.w * 1.9 + 1.2)}
+                      pathLength={1}
+                      strokeDasharray="1"
+                    />
+                  ) : null,
+                )}
+              </g>
+            </mask>
+          ))}
+        </defs>
+      )}
+
       <g
         transform={`translate(${r2(framing.tx)},${r2(framing.ty)}) scale(${r2(framing.scale)})`}
         filter={inked ? 'url(#sic-ink)' : undefined}
       >
-        {[...byWave].map(([wave, strokes]) => (
-          <g
-            key={wave}
-            stroke={palette.ink}
-            fill="none"
-            strokeLinecap="round"
-            style={grow(wave)}
-          >
-            {strokes.map((s, i) => (
-              <path
-                key={i}
-                d={s.d}
-                strokeWidth={r2(s.w)}
-                fill={s.fillBlade ? palette.foliage : 'none'}
-                fillOpacity={s.fillBlade ? 0.16 : 1}
-                opacity={s.pass ? 0.45 : 1}
-                /* `pathLength=1` normalise la longueur : un seul dasharray pour
-                   tous les traits, quelle que soit leur longueur réelle. */
-                pathLength={1}
-                strokeDasharray="1"
-              />
-            ))}
-          </g>
-        ))}
+        {[...byWave].map(([wave, strokes]) => {
+          const nibs = strokes.filter((s) => s.kind === 'nib')
+          const hairs = strokes.filter((s) => s.kind === 'hair')
+          return (
+            <g key={wave}>
+              {/* Traits de burin : des formes remplies, révélées par leur masque. */}
+              {nibs.length > 0 && (
+                <g
+                  fill={palette.ink}
+                  stroke="none"
+                  mask={animated ? `url(#${idPrefix}-grow-${wave})` : undefined}
+                >
+                  {nibs.map((s, i) => (
+                    <path
+                      key={i}
+                      d={s.d}
+                      fill={s.fillBlade ? palette.foliage : palette.ink}
+                      fillOpacity={s.fillBlade ? 0.16 : 1}
+                      stroke={s.fillBlade ? palette.ink : 'none'}
+                      strokeWidth={s.fillBlade ? r2(s.w) : undefined}
+                    />
+                  ))}
+                </g>
+              )}
+
+              {/* Cheveux : trop fins pour un contour, ils restent des `stroke`
+                  et gardent l'animation par `stroke-dashoffset`. */}
+              {hairs.length > 0 && (
+                <g stroke={palette.ink} fill="none" style={grow(wave)}>
+                  {hairs.map((s, i) => (
+                    <path
+                      key={i}
+                      d={s.d}
+                      strokeWidth={r2(s.w)}
+                      /* `pathLength=1` normalise la longueur : un seul dasharray
+                         pour tous les traits, quelle que soit leur longueur. */
+                      pathLength={1}
+                      strokeDasharray="1"
+                    />
+                  ))}
+                </g>
+              )}
+            </g>
+          )
+        })}
 
         <g stroke={palette.ink} fill="none">
           {plate.marks.map((m, i) => (

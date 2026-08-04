@@ -6,41 +6,41 @@
       "seed": 3297031088,
       "port": "grimpant",
       "palette": "fusain",
-      "latin": "Cornispina robusta",
+      "latin": "Salvianthus robusta",
       "specimen": 8088,
-      "markup": "8ff5a964a6ec9ea8"
+      "markup": "74c0270bffb3a3b4"
     },
     "Adrien": {
       "seed": 2862143470,
       "port": "rosette",
       "palette": "sepia",
-      "latin": "Eryaphylla robusta",
+      "latin": "Corninervia robusta",
       "specimen": 9470,
-      "markup": "4221622570ab97e3"
+      "markup": "aa9acbfac02080ff"
     },
     "Ana": {
       "seed": 2174885503,
       "port": "rosette",
       "palette": "sepia",
-      "latin": "Vulpianthus robusta",
+      "latin": "Cirsistemon robusta",
       "specimen": 9503,
-      "markup": "e3a1ee25294babbb"
+      "markup": "0ffe07da0913a3d6"
     },
     "Constantinople": {
       "seed": 2720249986,
       "port": "rosette",
       "palette": "sepia",
-      "latin": "Cirsipogon gracilis",
+      "latin": "Spermarhiza gracilis",
       "specimen": 9986,
-      "markup": "3191607746c1344c"
+      "markup": "52401c526d0d7436"
     },
     "siccus": {
       "seed": 252858942,
       "port": "grimpant",
       "palette": "olive",
-      "latin": "Eryastemon gracilis",
+      "latin": "Nervipogon gracilis",
       "specimen": 4942,
-      "markup": "d5e82a865522a5b1"
+      "markup": "ee8403630f4d22e9"
     },
     "fougere test": {
       "seed": 321547615,
@@ -48,7 +48,7 @@
       "palette": "fusain",
       "latin": "Caulicarpa robusta",
       "specimen": 5615,
-      "markup": "038cd8d337f6d650"
+      "markup": "f33fb99cf3634e4e"
     },
     "olive": {
       "seed": 1221160052,
@@ -56,23 +56,23 @@
       "palette": "olive",
       "latin": "Eryafolia gracilis",
       "specimen": 5052,
-      "markup": "a7a66e98b482c439"
+      "markup": "cdf0bbdf86b6dd90"
     },
     "graminee x": {
       "seed": 1792077926,
       "port": "rosette",
       "palette": "tabac",
-      "latin": "Caulicalyx alterna",
+      "latin": "Umbricarpa alterna",
       "specimen": 7926,
-      "markup": "630b459ad724b9ca"
+      "markup": "fc4cc4f094c19eb2"
     },
     "arbuste": {
       "seed": 3108312960,
       "port": "grimpant",
       "palette": "encre",
-      "latin": "Cornispina robusta",
+      "latin": "Spermastemon robusta",
       "specimen": 1960,
-      "markup": "dbf2d9f297ec850f"
+      "markup": "92bbdf167a42dfd2"
     },
     "zzz": {
       "seed": 2703109331,
@@ -80,15 +80,15 @@
       "palette": "sepia",
       "latin": "Vulpispina contorta",
       "specimen": 5331,
-      "markup": "f99498104f819398"
+      "markup": "d894e8b1d8c87e7c"
     },
     "a": {
       "seed": 519299066,
       "port": "arbustif",
       "palette": "olive",
-      "latin": "Cornirhiza nana",
+      "latin": "Cauliphylla nana",
       "specimen": 9066,
-      "markup": "826e03163bfe983c"
+      "markup": "d7bf9ca6733f2ed4"
     },
     "Marie-Lou": {
       "seed": 3086524573,
@@ -96,15 +96,15 @@
       "palette": "fusain",
       "latin": "Antherhiza gracilis",
       "specimen": 2573,
-      "markup": "de7fd2f37dbb402a"
+      "markup": "de4189646b730901"
     },
     "José": {
       "seed": 3239436999,
       "port": "arbustif",
       "palette": "tabac",
-      "latin": "Eryanervia robusta",
+      "latin": "Umbrifolia robusta",
       "specimen": 4999,
-      "markup": "04c5c02b433a3dee"
+      "markup": "46b91c027ae6285c"
     }
   }
 }

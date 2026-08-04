@@ -83,6 +83,44 @@ export function ribbon(pts: readonly Point[], wFn: (t: number) => number): Point
   return right.concat(left.reverse())
 }
 
+/**
+ * Un trait de burin : contour fermé d'une ligne dont l'épaisseur varie.
+ *
+ * C'est le premier écart d'une gravure avec un dessin vectoriel. Un `stroke`
+ * SVG a une épaisseur constante et des bouts arrondis ; une taille douce gonfle
+ * au milieu — le burin s'enfonce — et sort en pointe.
+ *
+ * @param w0 largeur à la base, `w1` à l'extrémité. `w1 = 0` sur un trait terminal.
+ * @param belly renflement au milieu, en fraction de la largeur.
+ */
+export function nib(
+  pts: readonly Point[],
+  w0: number,
+  w1: number,
+  belly: number,
+): Point[] {
+  return ribbon(pts, (t) => ((w0 + (w1 - w0) * t) * (1 + belly * Math.sin(Math.PI * t))) / 2)
+}
+
+/**
+ * Un trait de burin dont l'épaisseur est donnée point par point.
+ *
+ * Sert aux axes entiers : un axe doit être UN seul trait continu. Découpé en un
+ * ruban par entre-nœud, il montre des encoches et des ressauts de largeur à
+ * chaque jointure — l'effet chapelet de saucisses.
+ *
+ * @param widths largeur pleine à chaque point de `pts`, même longueur.
+ */
+export function nibVarying(pts: readonly Point[], widths: readonly number[]): Point[] {
+  const last = widths.length - 1
+  return ribbon(pts, (t) => {
+    const at = t * last
+    const i = Math.max(0, Math.min(last - 1, Math.floor(at)))
+    const f = at - i
+    return ((widths[i]! * (1 - f) + widths[i + 1]! * f) / 2) || 0.05
+  })
+}
+
 /** Vrille de plante grimpante : spirale qui se resserre. */
 export function tendril(x: number, y: number, ang: number, size: number, rng: Rng): string {
   const pts: Point[] = []

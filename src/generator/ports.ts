@@ -91,7 +91,7 @@ function rosette(sketch: Sketch, g: Genome, rng: Rng): PortResult {
     const prostrate = -168 + u * 156 + jit(rng, 9)
     const petiole = 10 + (1 - u) * 8 + rng() * 8
     const axis = stem(jit(rng, 2), 0, prostrate, petiole, jit(rng, 14), rng, 1.1, 3)
-    sketch.push(axis.pts, g.thickness * 0.24 * (1 - u * 0.35), Math.floor(i / 3))
+    sketch.nib(axis.pts, g.thickness * 0.3 * (1 - u * 0.3), g.thickness * 0.16, Math.floor(i / 3))
 
     const side = Math.cos(roll * RAD)
     sketch.organ({
@@ -174,16 +174,17 @@ function graminee(sketch: Sketch, g: Genome, rng: Rng): PortResult {
       d: sk(outline, true),
       w: g.thickness * 0.16,
       wave: Math.floor(i / 3),
-      pass: 0,
+      kind: 'nib',
+      spine: sk(axis.pts),
       fillBlade: true,
     })
-    sketch.push(axis.pts, g.thickness * 0.09, Math.floor(i / 3), 1)
+    sketch.hair(axis.pts, g.thickness * 0.09, Math.floor(i / 3))
   }
 
   const culms = 2 + Math.floor(rng() * 3)
   for (let i = 0; i < culms; i++) {
     const axis = stem(jit(rng, 5), 0, -90 + jit(rng, 8), 108 + rng() * 54, jit(rng, 20), rng, 1.4, 10)
-    sketch.stemStroke(axis, g.thickness * 0.32, 5)
+    sketch.nib(axis.pts, g.thickness * 0.34, g.thickness * 0.12, 5)
 
     const spikelets = 7 + Math.floor(rng() * 7)
     for (let k = 0; k < spikelets; k++) {
@@ -191,7 +192,7 @@ function graminee(sketch: Sketch, g: Genome, rng: Rng): PortResult {
       const p = axis.pts[Math.round(t * (axis.pts.length - 1))]!
       const a = axis.a + (k % 2 ? 1 : -1) * (40 + rng() * 26)
       const sp = stem(p[0], p[1], a, 7 + rng() * 7, jit(rng, 14), rng, 0.8, 3)
-      sketch.push(sp.pts, 0.22, 6)
+      sketch.hair(sp.pts, 0.22, 6)
       sketch.dots.push({ x: sp.x, y: sp.y, r: 1 + rng() * 0.7, wave: 7 })
     }
   }
@@ -267,7 +268,7 @@ function fougere(sketch: Sketch, g: Genome, rng: Rng): PortResult {
       1.3,
       14,
     )
-    sketch.push(rachis.pts, g.thickness * 0.3, i)
+    sketch.nib(rachis.pts, g.thickness * 0.34, g.thickness * 0.06, i)
 
     const pinnae = 11 + Math.floor(rng() * 8)
     for (let k = 0; k < pinnae; k++) {
@@ -316,7 +317,7 @@ function umbel(sketch: Sketch, g: Genome, rng: Rng, at: Point, wave: number): vo
     const a = -170 + k * (160 / (rays - 1)) + jit(rng, 6)
     const len = 8 + rng() * 9
     const end: Point = [at[0] + Math.cos(a * RAD) * len, at[1] + Math.sin(a * RAD) * len]
-    sketch.push([at, end], g.thickness * 0.11, wave)
+    sketch.hair([at, end], g.thickness * 0.11, wave)
     sketch.dots.push({ x: end[0], y: end[1], r: 0.9 + rng() * 0.8, wave: wave + 1 })
   }
 }

@@ -132,7 +132,7 @@ export function PlateSvg({
       </g>
 
       <Cartouche text={text} animated={animated} />
-      <Subject plate={plate} animated={animated} inked={textured} />
+      <Subject plate={plate} animated={animated} inked={textured} idPrefix={idPrefix} />
       <DetailPlates plate={plate} animated={animated} />
 
       {/* Encadrés au pointillé des deux détails. */}

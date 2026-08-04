@@ -54,9 +54,20 @@ export type Stroke = {
   d: string
   w: number
   wave: number
-  /** 0 = passe principale, 1 = repasse claire par-dessus. */
-  pass: number
-  /** Limbe de graminée : rempli du lavis de feuillage. */
+  /**
+   * `nib` — contour fermé d'un trait d'épaisseur variable, rendu en `fill`.
+   * `hair` — trait fin d'épaisseur constante, rendu en `stroke`. Sous ~0,35 unité
+   * un ruban serait invisible et deux fois plus lourd : radicelles, vrilles,
+   * ramilles restent des `hair`.
+   */
+  kind: 'nib' | 'hair'
+  /**
+   * Ligne médiane du trait. Ne sert qu'à l'animation : `stroke-dashoffset` ne
+   * s'applique pas à un remplissage, donc la croissance passe par un masque
+   * construit sur cette médiane. Absente à l'export, qui n'anime rien.
+   */
+  spine?: string
+  /** Limbe de graminée : contour rempli du lavis de feuillage. */
   fillBlade?: boolean
 }
 
