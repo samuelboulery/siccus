@@ -1,94 +1,94 @@
 {
-  "note": "Empreintes du balisage écrit. Rupture assumée du 04.VIII.2026 : passage au moteur d'axes à nœuds et au rendu de taille-douce. Toutes les plantes antérieures ont changé d'aspect — c'est délibéré et daté. Ne jamais régénérer ce fichier pour faire passer un test.",
+  "note": "Empreintes du balisage écrit. Rupture assumée du 04.VIII.2026 : moteur d'axes à nœuds et rendu de taille-douce. Toutes les plantes antérieures ont changé d'aspect — c'est délibéré et daté. Ne jamais régénérer ce fichier pour faire passer un test.",
   "collectedOn": "2026-08-04T12:00:00Z",
   "plates": {
     "Éléa": {
       "seed": 3297031088,
       "port": "grimpant",
       "palette": "fusain",
-      "latin": "Salvianthus robusta",
+      "latin": "Nervistemon robusta",
       "specimen": 8088,
-      "markup": "74c0270bffb3a3b4"
+      "markup": "46476496ca3acbd9"
     },
     "Adrien": {
       "seed": 2862143470,
       "port": "rosette",
       "palette": "sepia",
-      "latin": "Corninervia robusta",
+      "latin": "Astraphylla robusta",
       "specimen": 9470,
-      "markup": "aa9acbfac02080ff"
+      "markup": "390a0a97572ab7f7"
     },
     "Ana": {
       "seed": 2174885503,
       "port": "rosette",
       "palette": "sepia",
-      "latin": "Cirsistemon robusta",
+      "latin": "Eryastemon robusta",
       "specimen": 9503,
-      "markup": "0ffe07da0913a3d6"
+      "markup": "8be98375903006ae"
     },
     "Constantinople": {
       "seed": 2720249986,
       "port": "rosette",
       "palette": "sepia",
-      "latin": "Spermarhiza gracilis",
+      "latin": "Astrafolia gracilis",
       "specimen": 9986,
-      "markup": "52401c526d0d7436"
+      "markup": "32e6d1137bbd7aaf"
     },
     "siccus": {
       "seed": 252858942,
       "port": "grimpant",
       "palette": "olive",
-      "latin": "Nervipogon gracilis",
+      "latin": "Thalafolia gracilis",
       "specimen": 4942,
-      "markup": "ee8403630f4d22e9"
+      "markup": "82ae3e1b4ab90a59"
     },
     "fougere test": {
       "seed": 321547615,
       "port": "fougere",
       "palette": "fusain",
-      "latin": "Caulicarpa robusta",
+      "latin": "Astracarpa robusta",
       "specimen": 5615,
-      "markup": "f33fb99cf3634e4e"
+      "markup": "7d835afa0045bc80"
     },
     "olive": {
       "seed": 1221160052,
       "port": "fougere",
       "palette": "olive",
-      "latin": "Eryafolia gracilis",
+      "latin": "Salvispina gracilis",
       "specimen": 5052,
-      "markup": "cdf0bbdf86b6dd90"
+      "markup": "b4e2b837bbc8cac5"
     },
     "graminee x": {
       "seed": 1792077926,
       "port": "rosette",
       "palette": "tabac",
-      "latin": "Umbricarpa alterna",
+      "latin": "Nervifolia alterna",
       "specimen": 7926,
-      "markup": "fc4cc4f094c19eb2"
+      "markup": "db149ab4909f0cd9"
     },
     "arbuste": {
       "seed": 3108312960,
       "port": "grimpant",
       "palette": "encre",
-      "latin": "Spermastemon robusta",
+      "latin": "Thalastemon robusta",
       "specimen": 1960,
-      "markup": "92bbdf167a42dfd2"
+      "markup": "ddee9dac0ef5ab43"
     },
     "zzz": {
       "seed": 2703109331,
       "port": "fougere",
       "palette": "sepia",
-      "latin": "Vulpispina contorta",
+      "latin": "Dracoanthus contorta",
       "specimen": 5331,
-      "markup": "d894e8b1d8c87e7c"
+      "markup": "098c749e868dfce9"
     },
     "a": {
       "seed": 519299066,
       "port": "arbustif",
       "palette": "olive",
-      "latin": "Cauliphylla nana",
+      "latin": "Dracoanthus nana",
       "specimen": 9066,
-      "markup": "d7bf9ca6733f2ed4"
+      "markup": "0f7ec79ca10f7435"
     },
     "Marie-Lou": {
       "seed": 3086524573,
@@ -96,15 +96,15 @@
       "palette": "fusain",
       "latin": "Antherhiza gracilis",
       "specimen": 2573,
-      "markup": "de4189646b730901"
+      "markup": "da0e5d5494c3331a"
     },
     "José": {
       "seed": 3239436999,
       "port": "arbustif",
       "palette": "tabac",
-      "latin": "Umbrifolia robusta",
+      "latin": "Lycocarpa robusta",
       "specimen": 4999,
-      "markup": "46b91c027ae6285c"
+      "markup": "9224434f60e62857"
     }
   }
 }

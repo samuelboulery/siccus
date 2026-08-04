@@ -1,4 +1,4 @@
-import { jit, r2, RAD, type Rng } from './rng'
+import { jit, RAD, type Rng } from './rng'
 import { nudge, ribbon, sk } from './geometry'
 import type { LeafMargin, LeafShape, LeafType, Point } from '../lib/types'
 
@@ -8,7 +8,8 @@ import type { LeafMargin, LeafShape, LeafType, Point } from '../lib/types'
  * quantité de points ÉCRITE dans le fichier varie (voir `emission`).
  */
 const MID_STEPS = 22
-const HATCH_STEPS = 5
+/** Plafond de hachures de modelé sur un organe, même très grand. */
+const HATCH_MAX = 16
 
 /**
  * Résolution d'écriture, proportionnelle à la taille de l'organe.
@@ -30,9 +31,11 @@ function emission(size: number): {
   /* Seuils en unités du dessin, avant mise à l'échelle du cadrage. Un organe de
      45 est une feuille de rosette ou un détail agrandi ; un organe de 15 est une
      feuille de canopée, quelques millimètres sur la planche. */
-  if (size >= 45) return { stride: 1, doubleOutline: true, veinLimit: 99, hatchLimit: 99 }
-  if (size >= 30) return { stride: 2, doubleOutline: true, veinLimit: 8, hatchLimit: 4 }
-  if (size >= 18) return { stride: 3, doubleOutline: false, veinLimit: 4, hatchLimit: 2 }
+  if (size >= 45) return { stride: 1, doubleOutline: true, veinLimit: 99, hatchLimit: 16 }
+  if (size >= 30) return { stride: 2, doubleOutline: true, veinLimit: 8, hatchLimit: 8 }
+  if (size >= 18) return { stride: 3, doubleOutline: false, veinLimit: 4, hatchLimit: 0 }
+  /* Sous 18 unités le limbe fait trois millimètres sur la planche : le tramé du
+     `<pattern>` suffit, des hachures individuelles s'y empâteraient. */
   return { stride: 5, doubleOutline: false, veinLimit: 2, hatchLimit: 0 }
 }
 
@@ -85,6 +88,11 @@ export function leafOrgan(
    * feuillage d'une planche d'autocollants.
    */
   widthScale = 1,
+  /**
+   * Côté à l'ombre, +1 ou -1. Toutes les hachures d'un organe partent du même
+   * bord : c'est la cohérence de l'éclairage qui fait le volume.
+   */
+  shadeSide: 1 | -1 = 1,
 ): LeafShape {
   const n = MID_STEPS
   const out = emission(size)
@@ -133,9 +141,14 @@ export function leafOrgan(
     }
   }
 
+  /* Hachures de modelé : des traits transversaux qui partent de la marge et
+     rentrent vers la nervure, du côté à l'ombre. Ils suivent la courbure du
+     limbe — c'est ce qui distingue une hachure gravée d'une trame imprimée.
+     Le pas est constant, la longueur suit la largeur locale. */
   const hatch: string[] = []
-  for (let i = 0; i < HATCH_STEPS; i++) {
-    const t = 0.16 + i * 0.12
+  const hatchCount = Math.min(HATCH_MAX, out.hatchLimit)
+  for (let i = 0; i < hatchCount; i++) {
+    const t = 0.1 + ((i + 0.5) / hatchCount) * 0.8
     const idx = Math.round(t * n)
     const p = mid[idx]!
     const q = mid[Math.min(n, idx + 1)]!
@@ -143,11 +156,21 @@ export function leafOrgan(
     const dx = q[0] - o[0]
     const dy = q[1] - o[1]
     const m = Math.hypot(dx, dy) || 1
-    const w = wFn(t) * 0.72
-    hatch.push(
-      `M${r2(p[0] - (dy / m) * w)},${r2(p[1] + (dx / m) * w)} ` +
-        `L${r2(p[0] + (dy / m) * w * 0.25)},${r2(p[1] - (dx / m) * w * 0.25)}`,
-    )
+    const nx = (-dy / m) * shadeSide
+    const ny = (dx / m) * shadeSide
+
+    const w = wFn(t)
+    const outer = 0.9
+    const inner = 0.12 + rng() * 0.18
+    const start: Point = [p[0] + nx * w * outer, p[1] + ny * w * outer]
+    const end: Point = [p[0] + nx * w * inner, p[1] + ny * w * inner]
+    /* Un léger fléchissement vers l'apex : une hachure gravée n'est pas une
+       corde tendue en travers du limbe. */
+    const bow: Point = [
+      (start[0] + end[0]) / 2 + (q[0] - p[0]) * 0.8,
+      (start[1] + end[1]) / 2 + (q[1] - p[1]) * 0.8,
+    ]
+    hatch.push(sk([start, bow, end]))
   }
 
   /* ⚠ Ces deux tremblés doivent être calculés ICI, après les nervures et les

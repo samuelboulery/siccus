@@ -92,27 +92,37 @@ export function Subject({ plate, animated, inked, idPrefix }: SubjectProps) {
         filter={inked ? 'url(#sic-ink)' : undefined}
       >
         {[...byWave].map(([wave, strokes]) => {
-          const nibs = strokes.filter((s) => s.kind === 'nib')
+          const masked = strokes.filter((s) => s.kind !== 'hair')
           const hairs = strokes.filter((s) => s.kind === 'hair')
           return (
             <g key={wave}>
-              {/* Traits de burin : des formes remplies, révélées par leur masque. */}
-              {nibs.length > 0 && (
-                <g
-                  fill={palette.ink}
-                  stroke="none"
-                  mask={animated ? `url(#${idPrefix}-grow-${wave})` : undefined}
-                >
-                  {nibs.map((s, i) => (
-                    <path
-                      key={i}
-                      d={s.d}
-                      fill={s.fillBlade ? palette.foliage : palette.ink}
-                      fillOpacity={s.fillBlade ? 0.16 : 1}
-                      stroke={s.fillBlade ? palette.ink : 'none'}
-                      strokeWidth={s.fillBlade ? r2(s.w) : undefined}
-                    />
-                  ))}
+              {/* Traits de burin, contours modelés et hachures de volume : tout
+                  ce qui n'est pas un simple `stroke` animable est révélé par le
+                  masque de sa vague. */}
+              {masked.length > 0 && (
+                <g mask={animated ? `url(#${idPrefix}-grow-${wave})` : undefined}>
+                  {masked.map((s, i) =>
+                    s.kind === 'nib' ? (
+                      <path
+                        key={i}
+                        d={s.d}
+                        fill={s.fillBlade ? `url(#${idPrefix}-hatch-2)` : palette.ink}
+                        stroke={s.fillBlade ? palette.ink : 'none'}
+                        strokeWidth={s.fillBlade ? r2(s.w) : undefined}
+                      />
+                    ) : (
+                      <path
+                        key={i}
+                        d={s.d}
+                        fill="none"
+                        stroke={palette.ink}
+                        strokeWidth={r2(s.lineWidth ?? s.w)}
+                        strokeLinecap={s.kind === 'shade' ? 'round' : 'butt'}
+                        strokeLinejoin="round"
+                        opacity={s.kind === 'shade' ? 0.85 : 1}
+                      />
+                    ),
+                  )}
                 </g>
               )}
 
@@ -177,7 +187,7 @@ export function Subject({ plate, animated, inked, idPrefix }: SubjectProps) {
               key={i}
               organ={organ}
               ink={palette.ink}
-              wash={palette.foliage}
+              idPrefix={idPrefix}
               /* Léger décalage par feuille : elles ne se posent pas toutes ensemble. */
               style={fade(delayOf(organ.wave) + 0.3 + (i % 7) * 0.05)}
             />
@@ -202,11 +212,11 @@ export function Subject({ plate, animated, inked, idPrefix }: SubjectProps) {
 type LeafOrganElProps = {
   organ: Organ
   ink: string
-  wash: string
+  idPrefix: string
   style: React.CSSProperties | undefined
 }
 
-function LeafOrganEl({ organ, ink, wash, style }: LeafOrganElProps) {
+function LeafOrganEl({ organ, ink, idPrefix, style }: LeafOrganElProps) {
   const { shape } = organ
   /* L'épaisseur du trait suit la taille de l'organe : une penne de fougère ne se
      dessine pas au même calibre qu'une feuille de rosette. */
@@ -217,13 +227,14 @@ function LeafOrganEl({ organ, ink, wash, style }: LeafOrganElProps) {
       transform={`translate(${r2(organ.x)},${r2(organ.y)}) rotate(${r2(organ.ang + 90)})`}
       style={style}
     >
-      {/* Lavis et trait de contour sur UN seul chemin : le contour est de loin le
-          plus long des `d` d'un organe, et l'émettre deux fois doublait le poids
-          du fichier sur une plante à mille feuilles. */}
+      {/* Tramé et trait de contour sur UN seul chemin. Le remplissage n'est plus
+          un aplat de lavis mais un motif de hachures : une gravure n'a pas
+          d'aplat, sa valeur vient de la densité du trait. Le contour est de loin
+          le plus long des `d` d'un organe, et l'émettre deux fois doublait le
+          poids du fichier sur une plante à mille feuilles. */}
       <path
         d={shape.outline}
-        fill={wash}
-        fillOpacity={0.22}
+        fill={`url(#${idPrefix}-hatch-${organ.hatchLevel})`}
         stroke={ink}
         strokeWidth={r2(k * 1.2)}
         strokeOpacity={0.9}

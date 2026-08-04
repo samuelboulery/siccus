@@ -17,6 +17,8 @@ const DETAIL_SEED_SALT = 0x9e37
 type DetailPlatesProps = {
   plate: Plate
   animated: boolean
+  /** Préfixe des identifiants de motif, partagé avec le reste de la planche. */
+  idPrefix: string
 }
 
 /**
@@ -26,7 +28,7 @@ type DetailPlatesProps = {
  * sujet, appelées à grande taille — et ils font passer le rendu d'« output
  * génératif » à « document d'étude ».
  */
-export function DetailPlates({ plate, animated }: DetailPlatesProps) {
+export function DetailPlates({ plate, animated, idPrefix }: DetailPlatesProps) {
   const rng = mulberry32(plate.seed ^ DETAIL_SEED_SALT)
   const { ink, foliage } = plate.palette
   const [first, second] = DETAIL_BOXES
@@ -36,13 +38,21 @@ export function DetailPlates({ plate, animated }: DetailPlatesProps) {
       style={animated ? { animation: 'sic-in 1.2s ease-out 2.1s both' } : undefined}
       aria-hidden="true"
     >
-      <IsolatedLeaf plate={plate} cx={first.cx} cy={first.cy} ink={ink} wash={foliage} rng={rng} />
+      <IsolatedLeaf
+        plate={plate}
+        cx={first.cx}
+        cy={first.cy}
+        ink={ink}
+        wash={foliage}
+        rng={rng}
+        hatchFill={`url(#${idPrefix}-detail-hatch-2)`}
+      />
       <SecondDetail
         kind={plate.detail2}
         cx={second.cx}
         cy={second.cy}
         ink={ink}
-        wash={foliage}
+        wash={`url(#${idPrefix}-detail-hatch-2)`}
         rng={rng}
       />
     </g>
@@ -61,22 +71,30 @@ type OrganProps = {
  * Détail ① — la feuille isolée, face inférieure.
  * Même `leafOrgan` que la plante : le détail montre toujours l'organe du sujet.
  */
-function IsolatedLeaf({ plate, cx, cy, ink, wash, rng }: OrganProps & { plate: Plate }) {
+function IsolatedLeaf({
+  plate,
+  cx,
+  cy,
+  ink,
+  rng,
+  hatchFill,
+}: OrganProps & { plate: Plate; hatchFill: string }) {
   const { organType, organMargin, leafBend } = plate.genome
   const size = organType === 'lineaire' ? 70 : 62
-  const shape = leafOrgan(organType, organMargin, size, rng, leafBend * 0.5, 11)
+  /* Même fonction que la plante, à taille agrandie : le détail montre bien
+     l'organe du sujet, hachures de modelé comprises. */
+  const shape = leafOrgan(organType, organMargin, size, rng, leafBend * 0.5, 11, 1, 1)
 
   return (
     <g transform={`translate(${cx},${r2(cy + size / 2)})`}>
       <path
         d={shape.outline}
-        fill={wash}
-        fillOpacity={0.18}
+        fill={hatchFill}
         stroke={ink}
         strokeWidth={0.45}
         strokeLinejoin="round"
       />
-      <path d={shape.hatch.join(' ')} fill="none" stroke={ink} strokeWidth={0.24} opacity={0.34} />
+      <path d={shape.hatch.join(' ')} fill="none" stroke={ink} strokeWidth={0.3} opacity={0.7} />
       <path d={shape.veins.join(' ')} fill="none" stroke={ink} strokeWidth={0.26} opacity={0.6} />
       <path d={shape.midrib} fill="none" stroke={ink} strokeWidth={0.42} opacity={0.85} />
       {shape.outline2 && (
@@ -123,7 +141,6 @@ function StemSection({ cx, cy, ink, wash, rng }: OrganProps) {
           key={i}
           d={ring.d}
           fill={ring.fill}
-          fillOpacity={0.16}
           stroke={ink}
           strokeWidth={ring.width}
         />
@@ -154,7 +171,6 @@ function Umbel({ cx, cy, ink, wash, rng }: OrganProps) {
             cy={r2(item.end[1])}
             r={r2(item.r)}
             fill={wash}
-            fillOpacity={0.4}
             stroke={ink}
             strokeWidth={0.22}
           />
@@ -183,7 +199,7 @@ function Seed({ cx, cy, ink, wash, rng }: OrganProps) {
 
   return (
     <g transform={`translate(${cx},${cy})`}>
-      <path d={sk(outer, true)} fill={wash} fillOpacity={0.2} stroke={ink} strokeWidth={0.5} />
+      <path d={sk(outer, true)} fill={wash} stroke={ink} strokeWidth={0.5} />
       <path d={sk(halo, true)} fill="none" stroke={ink} strokeWidth={0.22} opacity={0.45} />
       <path d={hatch.join(' ')} fill="none" stroke={ink} strokeWidth={0.2} opacity={0.4} />
       <path d="M-6,-13 Q4,0 -3,14" fill="none" stroke={ink} strokeWidth={0.34} opacity={0.7} />

@@ -52,15 +52,25 @@ export type Genome = {
 /** Un trait d'encre. `wave` = vague de profondeur, unité de groupement de l'animation. */
 export type Stroke = {
   d: string
+  /**
+   * Emprise du trait — sa largeur géométrique. C'est elle, et non l'épaisseur du
+   * filet, qui dimensionne le masque de croissance : un contour de 0,2 masqué
+   * sur 0,2 laisserait invisible le cylindre de 5 qu'il dessine.
+   */
   w: number
+  /** Épaisseur du filet au rendu. Par défaut `w` — sauf pour un contour modelé. */
+  lineWidth?: number
   wave: number
   /**
    * `nib` — contour fermé d'un trait d'épaisseur variable, rendu en `fill`.
-   * `hair` — trait fin d'épaisseur constante, rendu en `stroke`. Sous ~0,35 unité
-   * un ruban serait invisible et deux fois plus lourd : radicelles, vrilles,
-   * ramilles restent des `hair`.
+   * `cyl` — même contour, mais laissé vide : au-delà d'une certaine épaisseur un
+   *   axe ne se dessine plus en plein, il se modèle. Le papier reste visible du
+   *   côté éclairé, et c'est ce qui le fait tourner.
+   * `shade` — les hachures transversales qui donnent ce volume.
+   * `hair` — trait fin d'épaisseur constante. Sous ~0,4 unité un ruban serait
+   *   invisible et deux fois plus lourd : radicelles, vrilles, épillets.
    */
-  kind: 'nib' | 'hair'
+  kind: 'nib' | 'cyl' | 'shade' | 'hair'
   /**
    * Ligne médiane du trait. Ne sert qu'à l'animation : `stroke-dashoffset` ne
    * s'applique pas à un remplissage, donc la croissance passe par un masque
@@ -98,6 +108,13 @@ export type Organ = {
   widthScale: number
   /** La feuille montre sa face inférieure : nervures saillantes, hachures pâles. */
   underside: boolean
+  /**
+   * Densité du tramé, 1 (clair) à 4 (croisé). Dérivée d'une source de lumière
+   * unique pour toute la planche : c'est la cohérence de cet éclairage qui fait
+   * qu'un feuillage se lit comme un volume et non comme une collection de
+   * silhouettes.
+   */
+  hatchLevel: 1 | 2 | 3 | 4
   shape: LeafShape
 }
 

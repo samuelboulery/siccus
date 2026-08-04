@@ -3,6 +3,7 @@ import { Subject } from './Subject'
 import { DetailPlates } from './DetailPlates'
 import { Cartouche } from './Cartouche'
 import { Annotations, Stamp } from './Annotations'
+import { HatchPatterns } from './HatchPatterns'
 import {
   DETAIL_BOXES,
   FOOT_RULE,
@@ -76,6 +77,13 @@ export function PlateSvg({
       {fontCss && <style dangerouslySetInnerHTML={{ __html: fontCss }} />}
 
       <defs>
+        {/* Deux jeux de motifs : le sujet vit dans un groupe mis à l'échelle du
+            cadrage, les détails agrandis non. Sans le second jeu, les hachures
+            des détails auraient un pas divisé par l'échelle du sujet — grossier
+            sur une petite plante, invisible sur une grande. */}
+        <HatchPatterns idPrefix={idPrefix} ink={palette.ink} scale={plate.framing.scale} />
+        <HatchPatterns idPrefix={`${idPrefix}-detail`} ink={palette.ink} scale={1} />
+
         <pattern id={gridPattern} width="8" height="8" patternUnits="userSpaceOnUse">
           <path d="M0 0 H8 M0 0 V8" fill="none" stroke="currentColor" strokeWidth={0.12} opacity={0.55} />
         </pattern>
@@ -133,7 +141,7 @@ export function PlateSvg({
 
       <Cartouche text={text} animated={animated} />
       <Subject plate={plate} animated={animated} inked={textured} idPrefix={idPrefix} />
-      <DetailPlates plate={plate} animated={animated} />
+      <DetailPlates plate={plate} animated={animated} idPrefix={idPrefix} />
 
       {/* Encadrés au pointillé des deux détails. */}
       <g stroke="currentColor" fill="none" opacity={0.3} strokeWidth={0.3} strokeDasharray="1.4 1.6">
