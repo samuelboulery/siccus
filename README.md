@@ -48,6 +48,15 @@ Un prénom offert il y a six mois ne rendrait plus la même planche.
 **Tout nouveau paramètre s'ajoute à la fin.** `src/generator/determinism.test.ts`
 fait tomber la build sinon.
 
+### Une rupture, datée
+
+Le **4 août 2026**, le générateur est passé au moteur d'axes à nœuds et au rendu de
+taille-douce. Toutes les plantes antérieures ont changé d'aspect. C'était délibéré :
+l'application n'était pas publiée, aucune planche n'avait été offerte. Les empreintes de
+`determinism.fixtures.json` repartent de cette date, et le contrat « même mot = même
+planche » court à partir de là. Il n'y aura pas de seconde rupture sans versionner le
+générateur.
+
 ---
 
 ## Changer les textes
@@ -111,11 +120,13 @@ La langue initiale suit `navigator.language`, puis le choix est retenu en `local
 src/
 ├── generator/     100 % pur, aucune dépendance React — c'est ce qui le rend testable
 │   ├── rng.ts             normalize · xmur3 · mulberry32
-│   ├── geometry.ts        tracés lissés, tiges, rubans, vrilles
-│   ├── leaf.ts            organes foliaires
+│   ├── geometry.ts        tracés lissés, tiges, rubans, traits de burin
+│   ├── axis.ts            ⚠ le moteur d'axes à nœuds — voir plus bas
+│   ├── light.ts           source unique, densité du tramé, côté d'ombre
+│   ├── leaf.ts            organes foliaires, raccourci, plis de presse
 │   ├── genome.ts          ⚠ ordre de consommation figé
-│   ├── ports.ts           arbustif · rosette · graminée · grimpant · fougère
-│   ├── roots.ts           racines fibreuses ou pivotantes
+│   ├── ports.ts           cinq jeux de réglages du moteur d'axes
+│   ├── roots.ts           racines fibreuses ou pivotantes, même moteur
 │   ├── framing.ts         bounding box calculée APRÈS génération
 │   ├── nomenclature.ts    binôme latin, n° de spécimen
 │   └── buildPlate.ts      orchestration → Plate
@@ -131,6 +142,86 @@ src/
 
 Une planche est décidée **en une passe**, avant l'affichage. L'animation ne fait que
 révéler une planche déjà entièrement décidée ; aucun calcul pendant la croissance.
+
+---
+
+## Comment une plante pousse
+
+Une plante ne se ramifie pas n'importe où : un nœud porte une feuille, et c'est à
+**l'aisselle** de cette feuille qu'un bourgeon peut débourrer en rameau. C'est le même
+événement. `axis.ts` construit donc un axe entre-nœud par entre-nœud :
+
+```
+roll += angle phyllotaxique       137,5° alterne · 90° décussé · 120° verticillé
+poser la ou les feuilles du nœud, orientées par roll
+évaluer le bourgeon axillaire
+s'il débourre, lancer un axe fille DANS l'aisselle
+```
+
+L'axe est son propre continuateur : la **dominance apicale** n'est pas simulée, elle
+tombe de la structure. Trois autres lois font le reste :
+
+| Loi | Ce qu'elle empêche |
+|---|---|
+| **Modèle du tuyau** — `w_parent^2.4 = Σ w_fille^2.4`, plus un amincissement propre | qu'un tronc ne porte pas visuellement sa ramure, et qu'un axe peu ramifié reste un tuyau |
+| **Tropismes** — axe fondateur orthotrope, filles plagiotropes avec mémoire de leur direction de départ | que chaque rameau se redresse à la verticale et que la plante devienne une colonne |
+| **Gradient d'entre-nœuds** — court, long, court | la régularité de peigne |
+
+Les cinq ports sont **cinq jeux de réglages du même moteur** : l'arbustif est basitone
+(plusieurs troncs depuis la souche, donc un buisson et non un arbre miniature), le
+grimpant plagiotrope à fort affaissement, la fougère un éventail de frondes à crosse.
+Les racines pivotantes réutilisent le moteur en miroir.
+
+Chaque feuille porte son `roll` et un **raccourci** dérivé de `cos(roll)` : une feuille
+qui pointe vers l'observateur se voit courte et étroite. Une ligne de trigonométrie, et
+le feuillage cesse d'être une planche d'autocollants.
+
+---
+
+## Comment une planche est gravée
+
+Registre : **taille-douce sur acier, XIXe** — Köhler, *Medizinal-Pflanzen*.
+
+**Le trait.** Un `stroke` SVG a une épaisseur constante et des bouts arrondis ; un burin
+gonfle au milieu et sort en pointe. Les axes sont donc des contours fermés remplis
+(`nib`, `nibVarying` dans `geometry.ts`), **un seul par axe** — découpés par entre-nœud
+ils montraient une encoche à chaque jointure. Le tremblé va dans la médiane, jamais dans
+le contour extrudé : nudger les deux flancs les fait diverger et hérisse le trait.
+Sous 0,4 unité on reste en `stroke` — un ruban y serait invisible et deux fois plus lourd.
+
+**Le volume.** Au-delà de 2,2 unités un axe n'est plus rempli mais **modelé** : contour
+vide, hachures transversales du côté de l'ombre, bande de papier laissée nue du côté
+éclairé. C'est ce reflet qui fait tourner un cylindre.
+
+**Le tramé.** Une gravure n'a pas d'aplat. Mais une plante dense porte plus de mille
+feuilles, et douze hachures dans chacune feraient exploser le fichier. D'où quatre
+`<pattern>` définis une fois et référencés par toutes les feuilles
+(`HatchPatterns.tsx`). `patternUnits="userSpaceOnUse"` : le motif hérite de la rotation
+du groupe de la feuille, donc les hachures courent selon l'axe de l'organe — comme les
+pose un graveur. **Mille feuilles partagent quatre motifs**, et le poids du pire cas est
+passé de 2,4 Mo à 566 Ko.
+
+**La lumière.** `light.ts` fixe une source unique en haut à gauche. Elle décide de la
+densité du tramé de chaque organe et du côté d'où partent ses hachures. C'est la
+cohérence de cet éclairage, plus que la finesse du trait, qui fait qu'un feuillage se
+lit comme un volume.
+
+**La presse.** Un limbe sur huit se replie et montre sa face inférieure — plus pâle,
+arête marquée. Le rabat est la portion du contour située après le pli, réfléchie : c'est
+exactement la forme qui manque.
+
+**Le procédé.** Marque de cuvette en creux à 6,5 mm du bord — l'empreinte de la plaque
+de cuivre, qu'aucune autre technique ne produit. Grain de papier en `feTurbulence`, et
+un filtre d'encre volontairement discret : l'irrégularité doit venir du trait, pas d'un
+tremblement d'ensemble.
+
+### Animer une forme remplie
+
+`stroke-dashoffset` ne s'applique pas à un remplissage. La croissance passe donc par un
+`<mask>` par vague, construit sur la **médiane** des traits — elle, animable — qui révèle
+les rubans le long de leur propre longueur. Les masques n'existent que dans le rendu
+animé : l'export passe `animated={false}` et n'en émet aucun, le fichier n'enfle pas.
+Mesuré à 60 fps sur le cas dense (18 masques, 1212 chemins).
 
 ---
 
@@ -156,15 +247,16 @@ n'a pas besoin de 46 points de contour. **Ce réglage n'intervient qu'à l'émis
 tous les points sont calculés, donc tous les tirages `rng` ont lieu, et alléger un
 organe ne déplace pas une branche.
 
-| Cas | SVG |
+| Cas | SVG, polices comprises |
 |---|---|
-| mot court, rosette / graminée | 260 – 290 Ko |
-| grimpant, fougère | 370 – 420 Ko |
-| mot long, port arbustif dense (>1000 feuilles) | 1,7 – 2,4 Mo |
+| graminée | ~240 Ko |
+| rosette, grimpant | 290 – 300 Ko |
+| fougère | 330 – 350 Ko |
+| mot long, port arbustif dense | 480 – 570 Ko |
 
-Le dernier cas dépasse la cible de 500 Ko : un arbre de 1500 feuilles individuellement
-tremblées ne tient pas sous cette barre sans réduire le nombre de feuilles ou réutiliser
-un jeu de formes via `<use>`. Les deux changeraient le dessin.
+Les polices inlinées pèsent 185 Ko à elles seules. Le tramé par `<pattern>` a divisé le
+pire cas par quatre : il ne reste que le cas le plus dense à dépasser légèrement la
+cible de 500 Ko.
 
 ---
 

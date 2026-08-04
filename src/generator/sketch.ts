@@ -99,6 +99,15 @@ export type OrganSpec = {
   veins?: number
 }
 
+/**
+ * Proportion de limbes repliés sous la presse. Au-delà d'un sur huit environ, la
+ * planche se lit comme un spécimen maltraité plutôt que pressé.
+ */
+const FOLD_RATE = 0.12
+
+/** Sous cette taille, un pli ne se verrait pas — trois millimètres sur la planche. */
+const FOLD_MIN_SIZE = 18
+
 export type Sketch = {
   readonly strokes: Stroke[]
   readonly organs: Organ[]
@@ -139,6 +148,18 @@ export function createSketch(genome: Genome, rng: Rng): Sketch {
     nib(pts, w0, w1, wave) {
       if (w0 < NIB_THRESHOLD) {
         this.hair(pts, w0, wave)
+        return
+      }
+      if (w0 >= CYLINDER_THRESHOLD) {
+        /* Un rachis de fougère de trois unités doit être modelé comme une tige
+           de trois unités. Sans ce renvoi, deux traits de même épaisseur
+           étaient rendus différemment selon la fonction qui les avait émis. */
+        const last = pts.length - 1
+        this.axis(
+          pts,
+          pts.map((_, i) => w0 + (w1 - w0) * (last > 0 ? i / last : 0)),
+          wave,
+        )
         return
       }
       /* Le tremblé va dans la MÉDIANE, jamais dans le contour extrudé : nudger
@@ -207,6 +228,12 @@ export function createSketch(genome: Genome, rng: Rng): Sketch {
     },
 
     organ(spec) {
+      /* Le spécimen a été mis sous presse : un limbe sur huit environ se replie
+         et montre sa face inférieure. C'est ce qui distingue une plante écrasée
+         d'une plante dessinée. */
+      const folded = spec.size >= FOLD_MIN_SIZE && rng() < FOLD_RATE
+      const foldAt = folded ? 0.42 + rng() * 0.3 : undefined
+
       organs.push({
         x: spec.x,
         y: spec.y,
@@ -226,6 +253,7 @@ export function createSketch(genome: Genome, rng: Rng): Sketch {
           spec.veins,
           spec.widthScale,
           shadeSideOf(spec.ang),
+          foldAt,
         ),
       })
     },

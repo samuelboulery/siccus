@@ -10,6 +10,7 @@ import {
   GRID_AREA,
   HEAD_RULE,
   MOUNT,
+  PLATEMARK,
   SCALE_BAR,
   SHEET,
 } from './layout'
@@ -88,11 +89,15 @@ export function PlateSvg({
           <path d="M0 0 H8 M0 0 V8" fill="none" stroke="currentColor" strokeWidth={0.12} opacity={0.55} />
         </pattern>
 
-        {/* L'encre qui bave aux jonctions : le trait n'est jamais parfaitement net. */}
+        {/* Le mordant de l'acide dans le métal : le trait n'est jamais
+            parfaitement net, mais une taille douce reste NETTE. L'irrégularité
+            vient maintenant du trait lui-même — épaisseur variable, tremblé de
+            la médiane — pas d'un tremblement d'ensemble. On tord donc deux fois
+            moins qu'avant, et à une fréquence plus haute. */}
         <filter id={inkFilter}>
           <feTurbulence
             type="fractalNoise"
-            baseFrequency="0.075"
+            baseFrequency="0.14"
             numOctaves={2}
             seed={plate.seed % 997}
             result="n"
@@ -100,7 +105,7 @@ export function PlateSvg({
           <feDisplacementMap
             in="SourceGraphic"
             in2="n"
-            scale={0.65}
+            scale={0.32}
             xChannelSelector="R"
             yChannelSelector="G"
           />
@@ -115,6 +120,30 @@ export function PlateSvg({
 
       <rect x={0} y={0} width={SHEET.w} height={SHEET.h} fill={MOUNT_BOARD} />
       <rect x={0} y={0} width={SHEET.w} height={SHEET.h} fill={palette.paper} />
+
+      {/* La cuvette : deux filets, l'un clair l'autre sombre, décalés d'un quart
+          de millimètre. C'est un creux, pas un trait — il ne se voit que parce
+          qu'il attrape la lumière d'un côté et l'ombre de l'autre. */}
+      <g fill="none">
+        <rect
+          x={PLATEMARK.x + 0.28}
+          y={PLATEMARK.y + 0.28}
+          width={PLATEMARK.w}
+          height={PLATEMARK.h}
+          stroke="#fff"
+          strokeWidth={0.5}
+          opacity={0.55}
+        />
+        <rect
+          x={PLATEMARK.x}
+          y={PLATEMARK.y}
+          width={PLATEMARK.w}
+          height={PLATEMARK.h}
+          stroke={palette.ink}
+          strokeWidth={0.45}
+          opacity={0.13}
+        />
+      </g>
 
       {variant === 'grid' && (
         <rect
@@ -168,7 +197,7 @@ export function PlateSvg({
         height={SHEET.h}
         filter={`url(#${grainFilter})`}
         style={{
-          opacity: textured ? 0.1 : 0,
+          opacity: textured ? 0.13 : 0,
           transition: animated ? 'opacity 0.5s ease-out' : undefined,
           mixBlendMode: 'multiply',
           pointerEvents: 'none',

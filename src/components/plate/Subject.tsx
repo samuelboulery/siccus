@@ -172,8 +172,8 @@ export function Subject({ plate, animated, inked, idPrefix }: SubjectProps) {
               cx={r2(d.x)}
               cy={r2(d.y)}
               r={r2(d.r)}
-              fill={palette.foliage}
-              fillOpacity={0.5}
+              /* Bouton ou épillet : tramé comme le reste, jamais un aplat. */
+              fill={`url(#${idPrefix}-hatch-2)`}
               stroke={palette.ink}
               strokeWidth={0.24}
               style={fade(delayOf(d.wave) + 0.2, 0.5)}
@@ -257,6 +257,21 @@ function LeafOrganEl({ organ, ink, idPrefix, style }: LeafOrganElProps) {
         opacity={0.55}
       />
       <path d={shape.midrib} fill="none" stroke={ink} strokeWidth={r2(k * 1.05)} opacity={0.8} />
+
+      {/* Le rabat de presse : la face inférieure du limbe, plus pâle d'un cran
+          puisqu'elle a été retournée à l'ombre, et son arête bien marquée. */}
+      {shape.fold && (
+        <>
+          <path
+            d={shape.fold.flap}
+            fill={`url(#${idPrefix}-hatch-${Math.max(1, organ.hatchLevel - 1)})`}
+            stroke={ink}
+            strokeWidth={r2(k * 1.1)}
+            strokeLinejoin="round"
+          />
+          <path d={shape.fold.crease} fill="none" stroke={ink} strokeWidth={r2(k * 1.35)} />
+        </>
+      )}
       {shape.outline2 && (
         <path
           d={shape.outline2}

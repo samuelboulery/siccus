@@ -89,6 +89,17 @@ export type LeafShape = {
   midrib: string
   veins: string[]
   hatch: string[]
+  /**
+   * Pli de presse. Le spécimen a été écrasé : un limbe sur dix se replie et
+   * montre sa face inférieure — plus pâle, nervures saillantes. C'est ce qui
+   * distingue une plante mise à plat d'une plante dessinée.
+   */
+  fold?: {
+    /** Le rabat, rabattu en miroir par-dessus le limbe. */
+    flap: string
+    /** L'arête du pli. */
+    crease: string
+  }
 }
 
 export type Organ = {

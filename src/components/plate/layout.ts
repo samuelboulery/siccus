@@ -12,6 +12,14 @@ export const SHEET = { w: 297, h: 420 } as const
 /** Cadre du montage et coins coupés. */
 export const MOUNT = { x: 10, y: 10, w: 277, h: 400 } as const
 
+/**
+ * Marque de cuvette : l'empreinte en creux laissée par le bord de la plaque de
+ * cuivre, écrasée dans le papier humide sous la presse. Aucune autre technique
+ * ne la produit — c'est la signature d'une taille-douce, et le premier détail
+ * qu'un œil averti cherche.
+ */
+export const PLATEMARK = { x: 6.5, y: 6.5, w: 284, h: 407 } as const
+
 /** Filet double sous l'en-tête. */
 export const HEAD_RULE = { x0: 20, x1: 277, y: 28.5, y2: 30.6 } as const
 

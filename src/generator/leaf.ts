@@ -93,6 +93,11 @@ export function leafOrgan(
    * bord : c'est la cohérence de l'éclairage qui fait le volume.
    */
   shadeSide: 1 | -1 = 1,
+  /**
+   * Position de l'arête de pli le long de la nervure, ou `undefined` si le limbe
+   * est resté à plat sous la presse.
+   */
+  foldAt?: number,
 ): LeafShape {
   const n = MID_STEPS
   const out = emission(size)
@@ -173,6 +178,45 @@ export function leafOrgan(
     hatch.push(sk([start, bow, end]))
   }
 
+  /* ── pli de presse ────────────────────────────────────────────────────────
+     Au-delà de l'arête, le limbe est rabattu en miroir : on réfléchit la portion
+     du contour située après le pli, plutôt que de la redessiner — la forme
+     rabattue est exactement celle qui manque, c'est ce qui rend le pli crédible. */
+  let fold: LeafShape['fold']
+  if (foldAt !== undefined && out.hatchLimit > 0) {
+    const k = Math.max(2, Math.min(n - 2, Math.round(foldAt * n)))
+    const p = mid[k]!
+    const q = mid[Math.min(n, k + 1)]!
+    const o = mid[Math.max(0, k - 1)]!
+    const dx = q[0] - o[0]
+    const dy = q[1] - o[1]
+    const m = Math.hypot(dx, dy) || 1
+    /* L'arête court en travers du limbe, donc perpendiculairement à la nervure. */
+    const ax = -dy / m
+    const ay = dx / m
+
+    const reflect = ([vx, vy]: Point): Point => {
+      const rx = vx - p[0]
+      const ry = vy - p[1]
+      const proj = rx * ax + ry * ay
+      return [p[0] + 2 * proj * ax - rx, p[1] + 2 * proj * ay - ry]
+    }
+
+    const flapPts = [...outline.slice(k, n + 1), ...outline.slice(n + 1, 2 * n + 2 - k)].map(
+      reflect,
+    )
+    if (flapPts.length > 3) {
+      const reach = wFn(foldAt) * 1.15
+      fold = {
+        flap: sk(decimate(flapPts, out.stride), true),
+        crease: sk([
+          [p[0] + ax * reach, p[1] + ay * reach],
+          [p[0] - ax * reach, p[1] - ay * reach],
+        ]),
+      }
+    }
+  }
+
   /* ⚠ Ces deux tremblés doivent être calculés ICI, après les nervures et les
      hachures : c'est l'ordre de l'ébauche, et le flux `rng` est partagé avec la
      croissance de la plante. Les déplacer redessinerait toutes les branches.
@@ -195,5 +239,6 @@ export function leafOrgan(
     midrib: sk(decimate(midrib, out.stride)),
     veins: veins.slice(0, out.veinLimit),
     hatch: hatch.slice(0, out.hatchLimit),
+    ...(fold ? { fold } : {}),
   }
 }
