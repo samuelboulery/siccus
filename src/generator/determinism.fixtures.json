@@ -1,5 +1,5 @@
 {
-  "note": "Empreintes du balisage écrit. Rupture assumée du 04.VIII.2026 : moteur d'axes à nœuds et rendu de taille-douce. Toutes les plantes antérieures ont changé d'aspect — c'est délibéré et daté. Ne jamais régénérer ce fichier pour faire passer un test.",
+  "note": "Empreintes du balisage écrit. Rupture assumée du 04.VIII.2026 : moteur d'axes à nœuds et rendu de taille-douce. La STRUCTURE des plantes est figée depuis ; les retouches de dessin (nervation, hachures, figures agrandies) changent ces empreintes sans déplacer une branche. Ne jamais régénérer ce fichier pour faire passer un test.",
   "collectedOn": "2026-08-04T12:00:00Z",
   "plates": {
     "Éléa": {
@@ -8,7 +8,7 @@
       "palette": "fusain",
       "latin": "Thalafolia robusta",
       "specimen": 8088,
-      "markup": "fdfb770c598ecb94"
+      "markup": "69cfde20b37cb8b2"
     },
     "Adrien": {
       "seed": 2862143470,
@@ -16,7 +16,7 @@
       "palette": "sepia",
       "latin": "Lycophylla robusta",
       "specimen": 9470,
-      "markup": "31b5fd20211bf541"
+      "markup": "1aa7dbdfff0f995e"
     },
     "Ana": {
       "seed": 2174885503,
@@ -24,7 +24,7 @@
       "palette": "sepia",
       "latin": "Anthecalyx robusta",
       "specimen": 9503,
-      "markup": "b6df495514f62ca6"
+      "markup": "54044b9fe16dda96"
     },
     "Constantinople": {
       "seed": 2720249986,
@@ -32,7 +32,7 @@
       "palette": "sepia",
       "latin": "Vulpipogon gracilis",
       "specimen": 9986,
-      "markup": "19c929edb9862ab4"
+      "markup": "229d6fd5b2b83293"
     },
     "siccus": {
       "seed": 252858942,
@@ -40,7 +40,7 @@
       "palette": "olive",
       "latin": "Spermapogon gracilis",
       "specimen": 4942,
-      "markup": "14df3a901defdea2"
+      "markup": "86eee2dd2159cf29"
     },
     "fougere test": {
       "seed": 321547615,
@@ -48,7 +48,7 @@
       "palette": "fusain",
       "latin": "Cirsispina robusta",
       "specimen": 5615,
-      "markup": "ab773a77e236c7e1"
+      "markup": "08167607bb6bdf4b"
     },
     "olive": {
       "seed": 1221160052,
@@ -56,7 +56,7 @@
       "palette": "olive",
       "latin": "Thalastemon gracilis",
       "specimen": 5052,
-      "markup": "30b7addc9dc611af"
+      "markup": "b3478b3eed51a44e"
     },
     "graminee x": {
       "seed": 1792077926,
@@ -64,7 +64,7 @@
       "palette": "tabac",
       "latin": "Umbricarpa alterna",
       "specimen": 7926,
-      "markup": "9017f045f5bbea59"
+      "markup": "721a96aef1605a27"
     },
     "arbuste": {
       "seed": 3108312960,
@@ -72,7 +72,7 @@
       "palette": "encre",
       "latin": "Umbriphylla robusta",
       "specimen": 1960,
-      "markup": "3a4032a62464b53f"
+      "markup": "fc3bffa4236f3680"
     },
     "zzz": {
       "seed": 2703109331,
@@ -80,7 +80,7 @@
       "palette": "sepia",
       "latin": "Salvicalyx contorta",
       "specimen": 5331,
-      "markup": "5618306da0f1aa3c"
+      "markup": "85e1799f8a3db7a0"
     },
     "a": {
       "seed": 519299066,
@@ -88,7 +88,7 @@
       "palette": "olive",
       "latin": "Nervistemon nana",
       "specimen": 9066,
-      "markup": "da032cd14e8ff0dd"
+      "markup": "067145865e6aee22"
     },
     "Marie-Lou": {
       "seed": 3086524573,
@@ -96,7 +96,7 @@
       "palette": "fusain",
       "latin": "Antherhiza gracilis",
       "specimen": 2573,
-      "markup": "9ad163df17e482bf"
+      "markup": "7c91657ca7aa41ea"
     },
     "José": {
       "seed": 3239436999,
@@ -104,7 +104,7 @@
       "palette": "tabac",
       "latin": "Salvifolia robusta",
       "specimen": 4999,
-      "markup": "470dd182c377b708"
+      "markup": "87ca116f55cce318"
     }
   }
 }

@@ -132,6 +132,11 @@ src/
 │   └── buildPlate.ts      orchestration → Plate
 ├── content/       fr.ts · en.ts · types · détection de langue
 ├── components/    écran unique, panneau de contenu, composition de la planche A3
+│   └── plate/
+│       ├── leaders.ts     filets de renvoi, pointes orientées sur la tangente
+│       ├── anchors.ts     ce que chaque flèche désigne, sans tirage
+│       ├── HatchPatterns  les quatre tramés partagés
+│       └── DetailPlates   les figures ① ② : feuille, coupe, graine, ombelle
 └── lib/
     ├── plateText.ts     point unique de résolution du texte imprimé
     ├── useOverrides.ts  surcharges globales et liées au spécimen
@@ -215,6 +220,25 @@ de cuivre, qu'aucune autre technique ne produit. Grain de papier en `feTurbulenc
 un filtre d'encre volontairement discret : l'irrégularité doit venir du trait, pas d'un
 tremblement d'ensemble.
 
+### Les renvois
+
+Chaque figure agrandie est reliée à l'endroit du sujet dont elle est tirée, et un
+chiffre jumeau est posé sur la cible. Sans ce renvoi les figures flottent : rien ne
+dit d'où elles viennent.
+
+La pointe est bâtie **sur la tangente terminale** du filet (`leaders.ts`). L'ancienne
+était un triangle écrit en dur : elle regardait toujours en bas à droite, quelle que
+soit l'arrivée de la courbe. Le filet s'arrête à 1,8 unité de sa cible — une flèche
+gravée effleure, elle ne pique pas le dessin — et il enfle vers la pointe comme tout
+trait de burin. Les deux filets de figures bombent en sens contraire pour ne pas se
+croiser quand leurs cibles sont dans l'ordre inverse de leurs encadrés.
+
+`anchors.ts` choisit ce que chaque flèche désigne **sans consommer un seul tirage** :
+tout se déduit de `Plate`. Une coupe de tige se prélève au collet, une graine au
+sommet, la feuille agrandie est l'organe le mieux offert du sujet. La note de terrain
+en désigne délibérément un autre — deux flèches convergentes se recouvrent et ne
+désignent plus rien.
+
 ### Animer une forme remplie
 
 `stroke-dashoffset` ne s'applique pas à un remplissage. La croissance passe donc par un
@@ -252,7 +276,7 @@ organe ne déplace pas une branche.
 | graminée | ~240 Ko |
 | rosette, grimpant | 290 – 300 Ko |
 | fougère | 330 – 350 Ko |
-| mot long, port arbustif dense | 480 – 570 Ko |
+| mot long, port arbustif dense | 530 – 580 Ko |
 
 Les polices inlinées pèsent 185 Ko à elles seules. Le tramé par `<pattern>` a divisé le
 pire cas par quatre : il ne reste que le cas le plus dense à dépasser légèrement la

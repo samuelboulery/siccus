@@ -4,8 +4,13 @@ import { DetailPlates } from './DetailPlates'
 import { Cartouche } from './Cartouche'
 import { Annotations, Stamp } from './Annotations'
 import { HatchPatterns } from './HatchPatterns'
+import { Leader } from './Leader'
+import { buildLeader } from './leaders'
+import { plateAnchors } from './anchors'
 import {
+  CORNER_TICK,
   DETAIL_BOXES,
+  FIGURE_NUMERAL_OFFSET,
   FOOT_RULE,
   GRID_AREA,
   HEAD_RULE,
@@ -14,8 +19,9 @@ import {
   SCALE_BAR,
   SHEET,
 } from './layout'
+import { FONTS } from '../../lib/fonts'
 import type { PlateText } from '../../lib/plateText'
-import type { Plate, Variant } from '../../lib/types'
+import type { Plate, Point, Variant } from '../../lib/types'
 
 /** Fond du support, sous le papier de la palette. Ne change jamais. */
 const MOUNT_BOARD = '#eee8db'
@@ -172,12 +178,29 @@ export function PlateSvg({
       <Subject plate={plate} animated={animated} inked={textured} idPrefix={idPrefix} />
       <DetailPlates plate={plate} animated={animated} idPrefix={idPrefix} />
 
-      {/* Encadrés au pointillé des deux détails. */}
-      <g stroke="currentColor" fill="none" opacity={0.3} strokeWidth={0.3} strokeDasharray="1.4 1.6">
+      {/* Équerres d'angle des deux figures, et le filet qui relie chacune à
+          l'endroit du sujet dont elle est tirée. Sans ce renvoi les figures
+          flottent : rien ne dit d'où elles viennent. */}
+      <g stroke="currentColor" fill="none" opacity={0.42} strokeWidth={0.32}>
         {DETAIL_BOXES.map((box) => (
-          <rect key={box.y} x={box.x} y={box.y} width={box.w} height={box.h} />
+          <path key={box.y} d={cornerTicks(box)} />
         ))}
       </g>
+
+      <g fill="currentColor" fontFamily={FONTS.body} fontSize={3.4} opacity={0.6}>
+        {DETAIL_BOXES.map((box, i) => (
+          <text
+            key={box.y}
+            x={box.x + FIGURE_NUMERAL_OFFSET.x}
+            y={box.y + FIGURE_NUMERAL_OFFSET.y}
+            letterSpacing={0.3}
+          >
+            {i + 1}
+          </text>
+        ))}
+      </g>
+
+      <FigureLeaders plate={plate} animated={animated} />
 
       <ScaleBar />
 
@@ -204,6 +227,68 @@ export function PlateSvg({
         }}
       />
     </svg>
+  )
+}
+
+/** Quatre équerres, une par coin, en un seul chemin. */
+function cornerTicks(box: { x: number; y: number; w: number; h: number }): string {
+  const t = CORNER_TICK
+  const { x, y, w, h } = box
+  return [
+    `M${x} ${y + t} V${y} H${x + t}`,
+    `M${x + w - t} ${y} H${x + w} V${y + t}`,
+    `M${x + w} ${y + h - t} V${y + h} H${x + w - t}`,
+    `M${x + t} ${y + h} H${x} V${y + h - t}`,
+  ].join(' ')
+}
+
+/**
+ * Les filets de renvoi : chaque figure agrandie montre d'où elle a été prélevée.
+ *
+ * Ils partent du chiffre de la figure et vont toucher un organe réel du sujet,
+ * avec un chiffre jumeau posé sur la cible. C'est ce que fait une planche
+ * d'étude, et c'est ce qui manquait le plus à la colonne de droite.
+ */
+function FigureLeaders({ plate, animated }: { plate: Plate; animated: boolean }) {
+  const anchors = plateAnchors(plate)
+  const targets = [anchors.figureOne, anchors.figureTwo]
+
+  return (
+    <g style={animated ? { animation: 'sic-in 1s ease-out 2.6s both' } : undefined}>
+      {DETAIL_BOXES.map((box, i) => {
+        const target = targets[i]
+        if (!target) return null
+        const from: Point = [box.x - 1.5, box.y + box.h * 0.5]
+        /* Les deux filets bombent en sens contraire : leurs cibles peuvent être
+           dans l'ordre inverse de leurs figures, et sans cet écartement ils se
+           croiseraient au milieu de la planche. */
+        const bow = i === 0 ? 0.075 : -0.075
+        const { tip, direction } = buildLeader({ from, to: target, bow })
+        /* Le chiffre se pose EN ARRIÈRE de la pointe et légèrement de côté :
+           collé sur la cible, il tombait dans le feuillage et devenait illisible. */
+        const label: Point = [
+          tip[0] - direction[0] * 5 - direction[1] * 2.4,
+          tip[1] - direction[1] * 5 + direction[0] * 2.4,
+        ]
+
+        return (
+          <g key={box.y}>
+            <Leader from={from} to={target} bow={bow} ink={plate.palette.ink} opacity={0.5} />
+            {/* Le chiffre jumeau, posé au bout du filet, sur le sujet. */}
+            <text
+              x={label[0]}
+              y={label[1]}
+              fill={plate.palette.ink}
+              fontFamily={FONTS.body}
+              fontSize={3.6}
+              opacity={0.75}
+            >
+              {i + 1}
+            </text>
+          </g>
+        )
+      })}
+    </g>
   )
 }
 

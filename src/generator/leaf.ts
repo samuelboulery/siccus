@@ -128,19 +128,37 @@ export function leafOrgan(
     const t = 0.1 + (i / (veinCount + 1)) * 0.82
     const idx = Math.round(t * n)
     const p = mid[idx]!
-    const q = mid[Math.min(n, idx + 1)]!
-    const o = mid[Math.max(0, idx - 1)]!
-    const dx = q[0] - o[0]
-    const dy = q[1] - o[1]
-    const m = Math.hypot(dx, dy) || 1
-    const w = wFn(t) * 0.94
-    const up = 0.34
+    /* ⚠ Cet appel est CONSERVÉ pour lui-même : `wFn` consomme un tirage `rng` à
+       chaque évaluation. Le retirer décalerait tout le flux, donc la structure de
+       toutes les plantes. Sa valeur, elle, ne sert plus depuis que les nervures
+       s'ancrent directement sur les points du contour. */
+    void wFn(t)
+
+    /* Nervation pennée : la secondaire quitte la médiane, avance VERS L'APEX et
+       s'incurve pour venir mourir près de la marge — le schéma brochidodrome des
+       dicotylédones. Elle ne traverse jamais la médiane ; l'ancien tracé partait
+       de part et d'autre du même point et se lisait comme un éventail. */
+    const idx2 = Math.min(n - 1, idx + Math.max(2, Math.round(n * 0.14)))
+    const ahead = mid[idx2]!
+
     for (const side of [1, -1]) {
-      const ex = p[0] - (dy / m) * w * side + (q[0] - p[0]) * n * up * 0.11
-      const ey = p[1] + (dx / m) * w * side + (q[1] - p[1]) * n * up * 0.11
+      /* L'arrivée est prise sur le CONTOUR, comme pour les hachures : calculée
+         depuis une largeur mesurée ailleurs, elle sortait du limbe près de
+         l'apex, là où le blade se referme. */
+      const edge = side > 0 ? outline[idx2]! : outline[2 * n + 1 - idx2]!
+      const ex = ahead[0] + (edge[0] - ahead[0]) * 0.86
+      const ey = ahead[1] + (edge[1] - ahead[1]) * 0.86
+
+      /* Le point de contrôle donne son arc à la nervure. Il est pris à
+         mi-parcours, lui aussi ANCRÉ sur le contour : poussé vers l'extérieur
+         d'une largeur mesurée ailleurs, il faisait bomber la courbe hors du
+         limbe là où celui-ci se resserre. */
+      const idxMid = Math.round((idx + idx2) / 2)
+      const spine = mid[idxMid]!
+      const edgeMid = side > 0 ? outline[idxMid]! : outline[2 * n + 1 - idxMid]!
       const control: Point = [
-        (p[0] + ex) / 2 + jit(rng, size * 0.02),
-        (p[1] + ey) / 2 + jit(rng, size * 0.02),
+        spine[0] + (edgeMid[0] - spine[0]) * 0.74 + jit(rng, size * 0.02),
+        spine[1] + (edgeMid[1] - spine[1]) * 0.74 + jit(rng, size * 0.02),
       ]
       veins.push(sk(nudge([p, control, [ex, ey]], rng, size * 0.006)))
     }
@@ -165,9 +183,14 @@ export function leafOrgan(
     const ny = (dx / m) * shadeSide
 
     const w = wFn(t)
-    const outer = 0.9
     const inner = 0.12 + rng() * 0.18
-    const start: Point = [p[0] + nx * w * outer, p[1] + ny * w * outer]
+
+    /* Le départ est pris DANS les points de ruban qui ont servi à extruder le
+       contour, pas dans une réévaluation de `wFn`. Les deux normales ne
+       coïncidaient pas, et les hachures dépassaient la marge : le défaut le plus
+       visible de la figure agrandie. Ici elles y touchent par construction. */
+    const start: Point =
+      shadeSide > 0 ? outline[idx]! : outline[2 * n + 1 - idx]!
     const end: Point = [p[0] + nx * w * inner, p[1] + ny * w * inner]
     /* Un léger fléchissement vers l'apex : une hachure gravée n'est pas une
        corde tendue en travers du limbe. */

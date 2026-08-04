@@ -32,6 +32,22 @@ export const DETAIL_BOXES = [
   { x: 196, y: 140, w: 82, h: 78, cx: 237, cy: 179, labelY: 136 },
 ] as const
 
+/**
+ * Équerres d'angle des figures, en remplacement d'un encadré au pointillé.
+ *
+ * Un cadre met la figure en cage et se lit comme un guide de maquette. Quatre
+ * repères aux coins la situent et disparaissent — c'est ce que trace un graveur
+ * pour caler sa plaque.
+ */
+export const CORNER_TICK = 4.2
+
+/**
+ * Chiffre de la figure, posé À GAUCHE de son angle supérieur — dans la gouttière
+ * entre le sujet et la colonne. Sous l'angle inférieur, il percutait la légende
+ * de la figure suivante.
+ */
+export const FIGURE_NUMERAL_OFFSET = { x: -5.5, y: 4 } as const
+
 /** Grossissements annoncés dans les légendes des détails. */
 export const DETAIL_SCALES = { leaf: 8, coupe: 8, ombelle: 8, graine: 4 } as const
 

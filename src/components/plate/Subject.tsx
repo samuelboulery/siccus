@@ -245,18 +245,18 @@ function LeafOrganEl({ organ, ink, idPrefix, style }: LeafOrganElProps) {
           d={shape.hatch.join(' ')}
           fill="none"
           stroke={ink}
-          strokeWidth={r2(k * 0.6)}
-          opacity={0.3}
+          strokeWidth={r2(k * 0.5)}
+          opacity={0.42}
         />
       )}
       <path
         d={shape.veins.join(' ')}
         fill="none"
         stroke={ink}
-        strokeWidth={r2(k * 0.7)}
-        opacity={0.55}
+        strokeWidth={r2(k * 0.68)}
+        opacity={0.7}
       />
-      <path d={shape.midrib} fill="none" stroke={ink} strokeWidth={r2(k * 1.05)} opacity={0.8} />
+      <path d={shape.midrib} fill="none" stroke={ink} strokeWidth={r2(k * 1.2)} opacity={0.88} />
 
       {/* Le rabat de presse : la face inférieure du limbe, plus pâle d'un cran
           puisqu'elle a été retournée à l'ombre, et son arête bien marquée. */}

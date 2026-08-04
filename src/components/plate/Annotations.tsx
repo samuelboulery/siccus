@@ -1,5 +1,7 @@
 import { r2 } from '../../generator/rng'
 import { FONTS } from '../../lib/fonts'
+import { Leader } from './Leader'
+import { plateAnchors } from './anchors'
 import { CARTOUCHE, NOTA, STAMP } from './layout'
 import type { PlateText } from '../../lib/plateText'
 import type { Plate } from '../../lib/types'
@@ -23,9 +25,10 @@ export function Annotations({ plate, text, animated }: AnnotationsProps) {
   const fade = (delay: number) =>
     animated ? { animation: `sic-in 0.9s ease-out ${delay}s both` } : undefined
 
-  /* La flèche part de la note et pointe vers le sujet ; elle suit donc le cadrage. */
-  const arrowX = r2(Math.min(178, plate.framing.tx + 70))
-  const arrowY = r2(plate.framing.groundY - 46)
+  /* La flèche des notes désigne un organe réel, et volontairement pas celui de
+     la figure ① : deux flèches convergentes se recouvrent et ne désignent plus
+     rien. Elle pointait jusqu'ici une coordonnée calculée, c'est-à-dire le vide. */
+  const target = plateAnchors(plate).note
 
   return (
     <g aria-hidden="true">
@@ -88,14 +91,15 @@ export function Annotations({ plate, text, animated }: AnnotationsProps) {
         <text x={NOTA.x} y={NOTA.lines[1]} fill={hand2} fontFamily={FONTS.hand2} fontSize={4.2}>
           {text.note2}
         </text>
-        <path
-          d={`M194 232 Q168 224 ${arrowX} ${arrowY}`}
-          stroke={hand2}
-          strokeWidth={0.35}
-          fill="none"
-          opacity={0.65}
-        />
-        <path d={`M${arrowX} ${arrowY} l3 -1.6 l-0.4 3.2 z`} fill={hand2} opacity={0.65} />
+        {target && (
+          <Leader
+            from={[NOTA.x - 3, NOTA.lines[0] - 5]}
+            to={target}
+            bow={-0.07}
+            ink={hand2}
+            opacity={0.62}
+          />
+        )}
         <text x={26} y={322.5} fill={hand2} fontFamily={FONTS.hand2} fontSize={3.6} opacity={0.7}>
           {text.marginNote}
         </text>

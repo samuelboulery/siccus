@@ -162,6 +162,74 @@ describe('gravure', () => {
   })
 })
 
+describe('dessin des organes', () => {
+  /** Bounding box de tous les nombres d'un chemin, lus par paires. */
+  function boundsOf(paths: readonly string[]): {
+    x0: number
+    x1: number
+    y0: number
+    y1: number
+  } | null {
+    let x0 = Infinity
+    let x1 = -Infinity
+    let y0 = Infinity
+    let y1 = -Infinity
+    let seen = false
+    for (const d of paths) {
+      const nums = d.match(/-?\d+(\.\d+)?/g) ?? []
+      for (let i = 0; i + 1 < nums.length; i += 2) {
+        const x = +nums[i]!
+        const y = +nums[i + 1]!
+        if (x < x0) x0 = x
+        if (x > x1) x1 = x
+        if (y < y0) y0 = y
+        if (y > y1) y1 = y
+        seen = true
+      }
+    }
+    return seen ? { x0, x1, y0, y1 } : null
+  }
+
+  test.each(WORDS)('« %s » — hachures et nervures restent dans le limbe', (word) => {
+    const { organs } = buildPlate(word, { now: NOW })
+    const drawn = organs.filter((o) => o.shape.hatch.length > 0)
+    if (drawn.length === 0) return
+
+    for (const organ of drawn) {
+      const blade = boundsOf([organ.shape.outline])!
+      /* Tolérance : la moitié d'un trait. Au-delà, ce sont les moignons qui
+         dépassaient la marge et faisaient lire les hachures comme un gribouillis. */
+      const slack = organ.size * 0.03
+
+      for (const set of [organ.shape.hatch, organ.shape.veins]) {
+        const b = boundsOf(set)
+        if (!b) continue
+        expect(b.x0).toBeGreaterThanOrEqual(blade.x0 - slack)
+        expect(b.x1).toBeLessThanOrEqual(blade.x1 + slack)
+        expect(b.y0).toBeGreaterThanOrEqual(blade.y0 - slack)
+        expect(b.y1).toBeLessThanOrEqual(blade.y1 + slack)
+      }
+    }
+  })
+
+  test.each(WORDS)('« %s » — les nervures ne traversent pas la médiane', (word) => {
+    const { organs } = buildPlate(word, { now: NOW })
+    for (const organ of organs.slice(0, 8)) {
+      /* Une nervation pennée part de la médiane et va vers UNE marge. Les paires
+         se suivent : la première d'un côté, la seconde de l'autre. Aucune ne doit
+         couvrir toute la largeur du limbe. */
+      const blade = boundsOf([organ.shape.outline])
+      if (!blade) continue
+      const width = blade.x1 - blade.x0
+      for (const vein of organ.shape.veins) {
+        const b = boundsOf([vein])
+        if (!b) continue
+        expect(b.x1 - b.x0).toBeLessThan(width * 0.95)
+      }
+    }
+  })
+})
+
 describe('poids du fichier', () => {
   /** Budget du balisage seul. Les polices inlinées ajoutent ~185 Ko à l'export. */
   const MAX_MARKUP = 420 * 1024
