@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { PlateSvg } from '../components/plate/PlateSvg'
 import { SHEET } from '../components/plate/layout'
-import type { Content } from '../content'
+import type { PlateText } from './plateText'
 import type { Plate, Variant } from './types'
 
 import cormorantNormal from '@fontsource/cormorant-garamond/files/cormorant-garamond-latin-400-normal.woff2?url'
@@ -71,7 +71,8 @@ async function embeddedFontCss(): Promise<string> {
 
 export type ExportInput = {
   plate: Plate
-  content: Content
+  /** Texte résolu : le fichier exporté porte les surcharges de l'écran. */
+  text: PlateText
   variant: Variant
 }
 
@@ -84,12 +85,12 @@ export type ExportInput = {
  * sans texture. Ici l'export ne dépend d'aucun état d'animation : `animated`
  * est faux, `textured` est vrai, toujours.
  */
-export async function plateToSvgString({ plate, content, variant }: ExportInput): Promise<string> {
+export async function plateToSvgString({ plate, text, variant }: ExportInput): Promise<string> {
   const fontCss = await embeddedFontCss()
   const markup = renderToStaticMarkup(
     PlateSvg({
       plate,
-      content,
+      text,
       variant,
       animated: false,
       textured: true,
@@ -101,14 +102,26 @@ export async function plateToSvgString({ plate, content, variant }: ExportInput)
   return `<?xml version="1.0" encoding="UTF-8"?>\n${markup}`
 }
 
-/** `siccus-lycospina-contorta-4471.svg` */
-export function plateFileName(plate: Plate, extension: 'svg' | 'png'): string {
-  const slug = plate.latin
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
+/**
+ * `siccus-lycospina-contorta-4471.svg`
+ *
+ * Le nom suit le bin\u00f4me AFFICH\u00c9 : renommer le sp\u00e9cimen dans le panneau renomme
+ * le fichier. Un bin\u00f4me vid\u00e9 retombe sur celui du tirage, jamais sur du vide.
+ */
+export function plateFileName(
+  plate: Plate,
+  text: PlateText,
+  extension: 'svg' | 'png',
+): string {
+  const slugify = (value: string): string =>
+    value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+
+  const slug = slugify(text.latin) || slugify(plate.latin) || 'specimen'
   return `siccus-${slug}-${plate.specimen}.${extension}`
 }
 
@@ -125,7 +138,7 @@ export async function exportSvg(input: ExportInput): Promise<void> {
   const svg = await plateToSvgString(input)
   const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }))
   try {
-    download(url, plateFileName(input.plate, 'svg'))
+    download(url, plateFileName(input.plate, input.text, 'svg'))
   } finally {
     /* Révocation différée : Safari lit le blob après le clic. */
     setTimeout(() => URL.revokeObjectURL(url), 4000)
@@ -150,7 +163,7 @@ export async function exportPng(input: ExportInput): Promise<void> {
     if (!blob) throw new Error('Encodage PNG impossible.')
 
     const pngUrl = URL.createObjectURL(blob)
-    download(pngUrl, plateFileName(input.plate, 'png'))
+    download(pngUrl, plateFileName(input.plate, input.text, 'png'))
     setTimeout(() => URL.revokeObjectURL(pngUrl), 4000)
   } finally {
     URL.revokeObjectURL(svgUrl)

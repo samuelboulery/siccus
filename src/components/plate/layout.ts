@@ -5,6 +5,8 @@
  * composants n'en écrivent aucun en dur, sinon déplacer le cartouche de deux
  * millimètres devient une chasse au trésor dans cinq fichiers.
  */
+import type { DetailKind } from '../../lib/types'
+
 export const SHEET = { w: 297, h: 420 } as const
 
 /** Cadre du montage et coins coupés. */
@@ -21,6 +23,11 @@ export const DETAIL_BOXES = [
   { x: 196, y: 50, w: 82, h: 78, cx: 237, cy: 89, labelY: 46 },
   { x: 196, y: 140, w: 82, h: 78, cx: 237, cy: 179, labelY: 136 },
 ] as const
+
+/** Grossissements annoncés dans les légendes des détails. */
+export const DETAIL_SCALES = { leaf: 8, coupe: 8, ombelle: 8, graine: 4 } as const
+
+export const detail2Scale = (kind: DetailKind): number => DETAIL_SCALES[kind]
 
 /** Barre d'échelle graduée : 45 unités du viewBox = 5 cm sur le sujet. */
 export const SCALE_BAR = {

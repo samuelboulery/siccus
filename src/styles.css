@@ -51,11 +51,26 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* ─── écran ──────────────────────────────────────────────────────────────── */
 
-.screen {
+.app {
+  display: flex;
+  align-items: stretch;
   min-height: 100vh;
-  min-height: 100svh;
+}
+
+.screen {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -196,6 +211,216 @@ body {
   font-size: 11.5px;
   color: rgb(32 31 29 / 0.42);
   text-align: center;
+}
+
+/* ─── panneau de contenu ─────────────────────────────────────────────────── */
+
+/* La planche rétrécit plutôt que de passer sous le panneau : on édite en
+   regardant le résultat, sinon autant éditer un fichier. */
+.panel {
+  flex: 0 0 clamp(300px, 26vw, 380px);
+  display: flex;
+  flex-direction: column;
+  max-height: 100vh;
+  position: sticky;
+  top: 0;
+  border-left: 1px solid rgb(32 31 29 / 0.14);
+  background: rgb(255 253 247 / 0.62);
+  backdrop-filter: blur(3px);
+}
+
+.panel__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 22px 22px 0;
+}
+
+.panel__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgb(32 31 29 / 0.75);
+}
+
+.panel__close,
+.panel__reset {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.45;
+  padding: 2px;
+  transition: opacity 0.25s;
+}
+
+.panel__close:hover,
+.panel__reset:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.panel__reset:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+.panel__hint {
+  margin: 8px 22px 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: rgb(32 31 29 / 0.42);
+}
+
+.panel__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 22px 22px;
+}
+
+.panel__foot {
+  border-top: 1px solid rgb(32 31 29 / 0.12);
+  padding: 12px 22px;
+}
+
+.group + .group {
+  border-top: 1px solid rgb(32 31 29 / 0.08);
+}
+
+.group__head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 11px 0;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  opacity: 0.62;
+  text-align: left;
+}
+
+.group__head:hover {
+  opacity: 1;
+}
+
+.group__caret {
+  font-size: 9px;
+  opacity: 0.6;
+}
+
+/* Une section qui contient une valeur modifiée porte un point. */
+.group__dot {
+  font-size: 20px;
+  line-height: 0;
+  color: var(--ink);
+  opacity: 0.55;
+}
+
+.group__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 0 14px 15px;
+}
+
+.field__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.field__label {
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: rgb(32 31 29 / 0.5);
+}
+
+.field[data-overridden='true'] .field__label {
+  color: rgb(32 31 29 / 0.85);
+}
+
+.field__revert {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1;
+  opacity: 0.4;
+  padding: 0 2px;
+}
+
+.field__revert:hover {
+  opacity: 1;
+}
+
+.field__input {
+  width: 100%;
+  margin-top: 3px;
+  border: 0;
+  border-bottom: 1px solid rgb(32 31 29 / 0.16);
+  background: transparent;
+  padding: 3px 0;
+  font-family: var(--font-display);
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--ink);
+  resize: vertical;
+}
+
+/* L'invite montre ce que le mot avait tiré : le champ vide n'est pas un oubli. */
+.field__input::placeholder {
+  color: rgb(32 31 29 / 0.3);
+}
+
+.field__input:focus {
+  outline: none;
+  border-bottom-color: rgb(32 31 29 / 0.55);
+}
+
+.field[data-overridden='true'] .field__input {
+  border-bottom-color: rgb(32 31 29 / 0.4);
+}
+
+.field__scope {
+  margin: 3px 0 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 10px;
+  color: rgb(32 31 29 / 0.34);
+}
+
+/* Sous 900 px le panneau prend toute la largeur : côte à côte, ni la planche ni
+   les champs ne seraient lisibles. */
+@media (max-width: 900px) {
+  .app {
+    flex-direction: column;
+  }
+
+  .panel {
+    flex: 1 1 auto;
+    position: static;
+    max-height: none;
+    border-left: 0;
+    border-top: 1px solid rgb(32 31 29 / 0.14);
+  }
 }
 
 /* ─── croissance ─────────────────────────────────────────────────────────── */

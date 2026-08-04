@@ -12,7 +12,7 @@ import {
   SCALE_BAR,
   SHEET,
 } from './layout'
-import type { Content } from '../../content'
+import type { PlateText } from '../../lib/plateText'
 import type { Plate, Variant } from '../../lib/types'
 
 /** Fond du support, sous le papier de la palette. Ne change jamais. */
@@ -20,7 +20,8 @@ const MOUNT_BOARD = '#eee8db'
 
 type PlateSvgProps = {
   plate: Plate
-  content: Content
+  /** Texte déjà résolu, surcharges comprises — voir lib/plateText.ts. */
+  text: PlateText
   variant: Variant
   /** Faux à l'export : la planche doit être complète dès le premier pixel. */
   animated: boolean
@@ -46,7 +47,7 @@ type PlateSvgProps = {
 
 export function PlateSvg({
   plate,
-  content,
+  text,
   variant,
   animated,
   textured,
@@ -69,7 +70,7 @@ export function PlateSvg({
       height={height}
       xmlns="http://www.w3.org/2000/svg"
       role="img"
-      aria-label={`${plate.word} — ${plate.latin}`}
+      aria-label={`${plate.word} — ${text.latin}`}
       style={{ display: 'block', color: palette.ink }}
     >
       {fontCss && <style dangerouslySetInnerHTML={{ __html: fontCss }} />}
@@ -130,7 +131,7 @@ export function PlateSvg({
         <path d={`M${HEAD_RULE.x0} ${HEAD_RULE.y2} H${HEAD_RULE.x1}`} strokeWidth={0.25} />
       </g>
 
-      <Cartouche plate={plate} content={content} animated={animated} />
+      <Cartouche text={text} animated={animated} />
       <Subject plate={plate} animated={animated} inked={textured} />
       <DetailPlates plate={plate} animated={animated} />
 
@@ -149,8 +150,8 @@ export function PlateSvg({
         <path d={`M${FOOT_RULE.splitX} 324 V404`} strokeWidth={0.22} opacity={0.55} />
       </g>
 
-      <Annotations plate={plate} content={content} animated={animated} />
-      <Stamp plate={plate} content={content} animated={animated} />
+      <Annotations plate={plate} text={text} animated={animated} />
+      <Stamp plate={plate} text={text} animated={animated} />
 
       <rect
         x={0}

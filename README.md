@@ -52,6 +52,26 @@ fait tomber la build sinon.
 
 ## Changer les textes
 
+### Dans l'app — le panneau « Contenu de la planche »
+
+Chaque texte de la feuille est modifiable en place, y compris le binôme latin, la
+station de récolte et le numéro d'herbier. Le champ affiche la valeur tirée en
+invite, et une flèche ⟲ y ramène.
+
+Deux portées, définies par `scope` dans `PLATE_TEXT_FIELDS` (`src/lib/plateText.ts`) :
+
+| Portée | Exemples | Durée de vie |
+|---|---|---|
+| `global` | récolteur, en-têtes, étiquettes latines, tampon, mention de pied | `localStorage`, suit tous les mots |
+| `specimen` | binôme, famille, station, altitude, notes, folio | mémoire seule, revient au tirage au mot suivant |
+
+Rien de tout cela n'entre dans le calcul du dessin : la planche est décidée avant, et
+le texte se pose par-dessus. C'est ce qui permet d'ouvrir même le binôme à l'édition
+sans abîmer le déterminisme — `determinism.test.ts` vérifie qu'une surcharge ne
+déplace pas un trait. Les exports emportent les surcharges, nom de fichier compris.
+
+### Dans le code — les valeurs par défaut
+
 Tout le texte visible — interface et planche — vit dans deux fichiers :
 
 ```
@@ -61,6 +81,11 @@ src/content/en.ts
 
 Un texte à corriger = une ligne à éditer. Les chaînes qui contiennent `{quelquechose}`
 sont des gabarits remplis par `fill()` : les noms entre accolades ne se traduisent pas.
+
+`src/lib/plateText.ts` est le point unique où chaque chaîne réellement imprimée est
+calculée. Les composants n'appellent jamais `fill()` : ils affichent `text.locus`.
+Ajouter un texte à la planche, c'est ajouter une entrée à `PLATE_TEXT_FIELDS` — et le
+typage exige alors son libellé dans `editor.fields` des deux langues.
 
 ### Ajouter une langue
 
@@ -95,8 +120,13 @@ src/
 │   ├── nomenclature.ts    binôme latin, n° de spécimen
 │   └── buildPlate.ts      orchestration → Plate
 ├── content/       fr.ts · en.ts · types · détection de langue
-├── components/    écran unique + composition de la planche A3
-└── lib/           types, polices, export SVG/PNG
+├── components/    écran unique, panneau de contenu, composition de la planche A3
+└── lib/
+    ├── plateText.ts     point unique de résolution du texte imprimé
+    ├── useOverrides.ts  surcharges globales et liées au spécimen
+    ├── exportPlate.ts   SVG et PNG, polices inlinées
+    ├── fonts.ts
+    └── types.ts
 ```
 
 Une planche est décidée **en une passe**, avant l'affichage. L'animation ne fait que

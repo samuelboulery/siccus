@@ -10,8 +10,10 @@ type ActionBarProps = {
   /** Ligne de légende : port et palette de la planche affichée. */
   caption: { port: string; palette: string }
   busy: boolean
+  panelOpen: boolean
   onVariantChange: (variant: Variant) => void
   onLocaleChange: (locale: Locale) => void
+  onTogglePanel: () => void
   onExportSvg: () => void
   onExportPng: () => void
 }
@@ -23,8 +25,10 @@ export function ActionBar({
   variant,
   caption,
   busy,
+  panelOpen,
   onVariantChange,
   onLocaleChange,
+  onTogglePanel,
   onExportSvg,
   onExportPng,
 }: ActionBarProps) {
@@ -69,6 +73,18 @@ export function ActionBar({
             {CONTENT[id].shortName}
           </button>
         ))}
+      </div>
+
+      <div className="actions__row">
+        <button
+          type="button"
+          className="act act--option"
+          aria-expanded={panelOpen}
+          data-active={panelOpen}
+          onClick={onTogglePanel}
+        >
+          {content.editor.open}
+        </button>
       </div>
 
       <p className="caption">{fill(content.ui.caption, caption)}</p>

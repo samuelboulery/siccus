@@ -5,17 +5,14 @@ import { leafOrgan } from '../../generator/leaf'
 import { DETAIL_BOXES } from './layout'
 import type { DetailKind, Plate, Point } from '../../lib/types'
 
+export { DETAIL_SCALES, detail2Scale } from './layout'
+
 /**
  * Décalage du seed pour le flux des détails. Les détails ne doivent PAS puiser
  * dans le flux principal : ils sont dessinés au rendu, pas à la génération, et
  * s'ils partageaient l'instance ils déplaceraient toute la planche.
  */
 const DETAIL_SEED_SALT = 0x9e37
-
-/** Grossissements affichés dans les légendes. */
-export const DETAIL_SCALES = { leaf: 8, coupe: 8, ombelle: 8, graine: 4 } as const
-
-export const detail2Scale = (kind: DetailKind): number => DETAIL_SCALES[kind]
 
 type DetailPlatesProps = {
   plate: Plate

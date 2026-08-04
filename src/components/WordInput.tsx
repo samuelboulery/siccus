@@ -1,9 +1,10 @@
 import { useEffect, useRef, type KeyboardEvent } from 'react'
-import type { Content } from '../content'
 
 type WordInputProps = {
   value: string
-  content: Content
+  /** Textes déjà résolus : ils sont éditables comme le reste de la page. */
+  kicker: string
+  placeholder: string
   onChange: (value: string) => void
   /** Appelé quand la saisie est validée : Entrée, ou perte du focus. */
   onCommit: () => void
@@ -16,7 +17,7 @@ type WordInputProps = {
  * Il ne se vide jamais seul — un mot déjà tapé reste lisible pendant qu'on
  * regarde sa planche.
  */
-export function WordInput({ value, content, onChange, onCommit }: WordInputProps) {
+export function WordInput({ value, kicker, placeholder, onChange, onCommit }: WordInputProps) {
   const ref = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -29,7 +30,7 @@ export function WordInput({ value, content, onChange, onCommit }: WordInputProps
 
   return (
     <div className="word">
-      <div className="kicker">{content.ui.kicker}</div>
+      <div className="kicker">{kicker}</div>
       <input
         ref={ref}
         className="word__input"
@@ -37,8 +38,8 @@ export function WordInput({ value, content, onChange, onCommit }: WordInputProps
         spellCheck={false}
         autoComplete="off"
         autoCapitalize="off"
-        aria-label={content.ui.placeholder}
-        placeholder={content.ui.placeholder}
+        aria-label={placeholder}
+        placeholder={placeholder}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         onKeyDown={handleKeyDown}

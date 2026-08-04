@@ -1,12 +1,9 @@
-import { fill, type Content } from '../../content'
 import { FONTS } from '../../lib/fonts'
 import { CARTOUCHE, DETAIL_BOXES, NOTA, SCALE_BAR, SPINE } from './layout'
-import { detail2Scale, DETAIL_SCALES } from './DetailPlates'
-import type { Plate } from '../../lib/types'
+import type { PlateText } from '../../lib/plateText'
 
 type CartoucheProps = {
-  plate: Plate
-  content: Content
+  text: PlateText
   animated: boolean
 }
 
@@ -14,14 +11,10 @@ type CartoucheProps = {
  * Tout le texte IMPRIMÉ de la planche : en-tête, légendes des détails, échelle,
  * étiquettes latines du cartouche, mention de pied.
  *
- * Aucune chaîne n'est écrite ici — elles viennent toutes de `content`, ce qui
- * rend la planche traduisible sans toucher au dessin.
+ * Aucune chaîne n'est composée ici — elles arrivent déjà résolues depuis
+ * `resolvePlateText`, surcharges comprises. Ce composant ne fait que les poser.
  */
-export function Cartouche({ plate, content, animated }: CartoucheProps) {
-  const { plate: t } = content
-  const g = plate.genome
-  const detail1 = g.organType === 'lineaire' ? t.detail1Sheathing : t.detail1
-
+export function Cartouche({ text, animated }: CartoucheProps) {
   return (
     <g
       fill="currentColor"
@@ -36,7 +29,7 @@ export function Cartouche({ plate, content, animated }: CartoucheProps) {
         letterSpacing={1.9}
         opacity={0.9}
       >
-        {t.header}
+        {text.header}
       </text>
       <text
         x={277}
@@ -47,10 +40,17 @@ export function Cartouche({ plate, content, animated }: CartoucheProps) {
         textAnchor="end"
         opacity={0.6}
       >
-        {t.headerRight}
+        {text.headerRight}
       </text>
-      <text x={CARTOUCHE.left} y={36.6} fontFamily={FONTS.body} fontSize={3.1} fontStyle="italic" opacity={0.5}>
-        {t.tagline}
+      <text
+        x={CARTOUCHE.left}
+        y={36.6}
+        fontFamily={FONTS.body}
+        fontSize={3.1}
+        fontStyle="italic"
+        opacity={0.5}
+      >
+        {text.tagline}
       </text>
       <text
         x={277}
@@ -61,7 +61,7 @@ export function Cartouche({ plate, content, animated }: CartoucheProps) {
         textAnchor="end"
         opacity={0.55}
       >
-        {fill(t.folioLine, { folio: plate.folio, specimen: plate.specimen })}
+        {text.folioLine}
       </text>
 
       {/* ── marge : cote d'archive ── */}
@@ -73,10 +73,7 @@ export function Cartouche({ plate, content, animated }: CartoucheProps) {
         opacity={0.45}
         textAnchor="middle"
       >
-        {fill(t.spine, {
-          specimen: plate.specimen,
-          palette: content.palettes[plate.palette.id].toLocaleUpperCase(content.htmlLang),
-        })}
+        {text.spine}
       </text>
 
       {/* ── légendes des deux détails ── */}
@@ -88,7 +85,7 @@ export function Cartouche({ plate, content, animated }: CartoucheProps) {
         letterSpacing={0.35}
         opacity={0.6}
       >
-        {fill(detail1, { scale: DETAIL_SCALES.leaf })}
+        {text.detail1}
       </text>
       <text
         x={DETAIL_BOXES[1].x}
@@ -98,10 +95,7 @@ export function Cartouche({ plate, content, animated }: CartoucheProps) {
         letterSpacing={0.35}
         opacity={0.6}
       >
-        {fill(t.detail2, {
-          kind: t.detailKinds[plate.detail2],
-          scale: detail2Scale(plate.detail2),
-        })}
+        {text.detail2}
       </text>
 
       {/* ── échelle ── */}
@@ -113,7 +107,7 @@ export function Cartouche({ plate, content, animated }: CartoucheProps) {
         letterSpacing={0.4}
         opacity={0.5}
       >
-        {t.scaleLabel}
+        {text.scaleLabel}
       </text>
       <text
         x={SCALE_BAR.x}
@@ -123,7 +117,7 @@ export function Cartouche({ plate, content, animated }: CartoucheProps) {
         opacity={0.55}
         textAnchor="middle"
       >
-        {t.scaleZero}
+        {text.scaleZero}
       </text>
       <text
         x={SCALE_BAR.x + SCALE_BAR.length}
@@ -133,11 +127,18 @@ export function Cartouche({ plate, content, animated }: CartoucheProps) {
         opacity={0.55}
         textAnchor="middle"
       >
-        {fill(t.scaleMax, { cm: SCALE_BAR.centimetres })}
+        {text.scaleMax}
       </text>
 
-      <text x={NOTA.x} y={NOTA.labelY} fontFamily={FONTS.body} fontSize={2.7} letterSpacing={0.6} opacity={0.55}>
-        {t.notaLabel}
+      <text
+        x={NOTA.x}
+        y={NOTA.labelY}
+        fontFamily={FONTS.body}
+        fontSize={2.7}
+        letterSpacing={0.6}
+        opacity={0.55}
+      >
+        {text.notaLabel}
       </text>
 
       {/* ── détermination ── */}
@@ -149,7 +150,7 @@ export function Cartouche({ plate, content, animated }: CartoucheProps) {
         letterSpacing={2.1}
         opacity={0.85}
       >
-        {plate.word.toLocaleUpperCase(content.htmlLang)}
+        {text.word}
       </text>
       <text
         x={CARTOUCHE.left}
@@ -159,7 +160,7 @@ export function Cartouche({ plate, content, animated }: CartoucheProps) {
         fontStyle="italic"
         opacity={0.95}
       >
-        {plate.latin}
+        {text.latin}
       </text>
       <text
         x={CARTOUCHE.left}
@@ -169,29 +170,56 @@ export function Cartouche({ plate, content, animated }: CartoucheProps) {
         fontStyle="italic"
         opacity={0.55}
       >
-        {fill(t.diagnosis, {
-          port: content.ports[g.portId],
-          phyllotaxy: content.phyllotaxies[g.phyllotaxy],
-          margin: content.margins[g.margin],
-        })}
+        {text.diagnosis}
       </text>
 
-      {/* ── champs à remplir à la main ── */}
-      <FieldRow label={t.fields.familia} x={CARTOUCHE.left} y={CARTOUCHE.rows[0]} leader={CARTOUCHE.leaderLeft} />
-      <FieldRow label={t.fields.locus} x={CARTOUCHE.left} y={CARTOUCHE.rows[1]} leader={CARTOUCHE.leaderLeft} />
-      <FieldRow label={t.fields.altitudo} x={CARTOUCHE.left} y={CARTOUCHE.rows[2]} leader={CARTOUCHE.leaderLeft} />
-      <FieldRow label={t.fields.determinavit} x={CARTOUCHE.right} y={CARTOUCHE.wordY} />
-      <FieldRow label={t.fields.dies} x={CARTOUCHE.right} y={CARTOUCHE.rows[0]} leader={CARTOUCHE.leaderRight} />
-      <FieldRow label={t.fields.legit} x={CARTOUCHE.right} y={CARTOUCHE.rows[1]} leader={CARTOUCHE.leaderRight} />
+      {/* ── champs remplis à la main ── */}
       <FieldRow
-        label={t.fields.herbNo}
+        label={text.labelFamilia}
+        x={CARTOUCHE.left}
+        y={CARTOUCHE.rows[0]}
+        leader={CARTOUCHE.leaderLeft}
+      />
+      <FieldRow
+        label={text.labelLocus}
+        x={CARTOUCHE.left}
+        y={CARTOUCHE.rows[1]}
+        leader={CARTOUCHE.leaderLeft}
+      />
+      <FieldRow
+        label={text.labelAltitudo}
+        x={CARTOUCHE.left}
+        y={CARTOUCHE.rows[2]}
+        leader={CARTOUCHE.leaderLeft}
+      />
+      <FieldRow label={text.labelDeterminavit} x={CARTOUCHE.right} y={CARTOUCHE.wordY} />
+      <FieldRow
+        label={text.labelDies}
+        x={CARTOUCHE.right}
+        y={CARTOUCHE.rows[0]}
+        leader={CARTOUCHE.leaderRight}
+      />
+      <FieldRow
+        label={text.labelLegit}
+        x={CARTOUCHE.right}
+        y={CARTOUCHE.rows[1]}
+        leader={CARTOUCHE.leaderRight}
+      />
+      <FieldRow
+        label={text.labelHerbNo}
         x={CARTOUCHE.right}
         y={CARTOUCHE.rows[2]}
         leader={{ x: 214, w: 63 }}
       />
 
-      <text x={CARTOUCHE.left} y={CARTOUCHE.footerY} fontFamily={FONTS.body} fontSize={2.4} opacity={0.4}>
-        {t.footer}
+      <text
+        x={CARTOUCHE.left}
+        y={CARTOUCHE.footerY}
+        fontFamily={FONTS.body}
+        fontSize={2.4}
+        opacity={0.4}
+      >
+        {text.footer}
       </text>
     </g>
   )

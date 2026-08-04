@@ -6,6 +6,7 @@ import type {
   PortId,
   Variant,
 } from '../lib/types'
+import type { PlateTextKey, PlateTextSection } from '../lib/plateText'
 
 export type Locale = 'fr' | 'en'
 
@@ -47,6 +48,29 @@ export type Content = {
     caption: string
     /** Étiquette d'accessibilité du sélecteur de langue. */
     languageLabel: string
+  }
+
+  /**
+   * Le panneau d'édition du contenu de la planche.
+   *
+   * `fields` doit couvrir toutes les clés de `PlateText` : ajouter un texte à la
+   * planche sans lui donner de libellé ici ne compile pas.
+   */
+  editor: {
+    open: string
+    title: string
+    close: string
+    /** Bouton de retour à la valeur tirée, sur un champ surchargé. */
+    revert: string
+    resetAll: string
+    /** Confirmation avant remise à zéro complète. */
+    resetAllConfirm: string
+    /** Mention sous le titre : ce que l'édition ne touche pas. */
+    hint: string
+    /** Repère sur les champs qui reviennent au tirage au prochain mot. */
+    specimenScope: string
+    sections: Record<PlateTextSection, string>
+    fields: Record<PlateTextKey, string>
   }
 
   plate: {

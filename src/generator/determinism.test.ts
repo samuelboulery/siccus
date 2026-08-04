@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { buildPlate } from './buildPlate'
 import { normalize, seedOf } from './rng'
 import { PlateSvg } from '../components/plate/PlateSvg'
+import { resolvePlateText, type PlateTextOverrides } from '../lib/plateText'
 import { fr } from '../content/fr'
 import { en } from '../content/en'
 import fixtures from './determinism.fixtures.json'
@@ -29,10 +30,11 @@ import fixtures from './determinism.fixtures.json'
 /** Date figée : la date de récolte est la seule part de la planche qui dépend du jour. */
 const COLLECTED_ON = new Date('2026-08-04T12:00:00Z')
 
-function markupOf(word: string, content = fr): string {
+function markupOf(word: string, content = fr, overrides: PlateTextOverrides = {}): string {
   const plate = buildPlate(word, { now: COLLECTED_ON })
+  const { text } = resolvePlateText(plate, content, overrides)
   return renderToStaticMarkup(
-    PlateSvg({ plate, content, variant: 'mounted', animated: false, textured: true }),
+    PlateSvg({ plate, text, variant: 'mounted', animated: false, textured: true }),
   )
 }
 
@@ -81,6 +83,45 @@ describe('reproductibilité', () => {
       expect(enMarkup).toContain(plate.latin)
       expect(enMarkup).toContain(String(plate.specimen))
     }
+  })
+})
+
+describe('surcharges de contenu', () => {
+  /* Le panneau d'édition ouvre TOUT le texte de la planche, y compris le binôme
+     et le n° de spécimen. Il ne doit pouvoir toucher que du texte. */
+  test('éditer un texte ne déplace pas un trait', () => {
+    const reference = markupOf('Éléa')
+    const edited = markupOf('Éléa', fr, {
+      latin: 'Rosa canina',
+      collector: 'A. de Jussieu',
+      locus: 'in horto botanico Parisiensi',
+      header: 'MON HERBIER',
+      note1: '',
+    })
+
+    expect(edited).not.toBe(reference)
+    expect(hash(pathsOnly(edited))).toBe(hash(pathsOnly(reference)))
+    expect(edited).toContain('Rosa canina')
+    expect(edited).toContain('A. de Jussieu')
+  })
+
+  test('surcharger le binôme met à jour la ligne de révision', () => {
+    const edited = markupOf('Éléa', fr, { latin: 'Rosa canina' })
+    expect(edited).toContain('→ Rosa canina')
+  })
+
+  test('surcharger la date met à jour la révision et le tampon', () => {
+    const edited = markupOf('Éléa', fr, { date: '12.III.1897' })
+    expect(edited).toContain('rev. 12.III.1897')
+    /* Deux fois au moins : le champ DIES et le tampon. */
+    expect(edited.split('12.III.1897').length - 1).toBeGreaterThanOrEqual(3)
+  })
+
+  test('une chaîne vide efface le texte au lieu de rendre la valeur tirée', () => {
+    const { text } = resolvePlateText(buildPlate('Éléa', { now: COLLECTED_ON }), fr, {
+      note1: '',
+    })
+    expect(text.note1).toBe('')
   })
 })
 
