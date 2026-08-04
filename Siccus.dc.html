@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/classical-f41adb54-a988-4e85-8302-adef7143909b/styles.css">
+<script src="_ds/classical-f41adb54-a988-4e85-8302-adef7143909b/_ds_bundle.js"></script>
+<style>
+  html, body { margin:0; background:#e6e3dc; }
+  a { color: var(--color-accent-700); text-decoration: none; }
+  a:hover { color: var(--color-accent); }
+  @keyframes sic-grow { from { stroke-dashoffset: 1 } to { stroke-dashoffset: 0 } }
+  @keyframes sic-leaf { from { opacity: 0 } to { opacity: 1 } }
+  @keyframes sic-in { from { opacity: 0 } to { opacity: 1 } }
+  #sic-word::placeholder { color: rgba(32,31,29,0.22); }
+  #sic-word:focus-visible { outline: none; }
+  .sic-act { transition: opacity .25s; }
+  .sic-act:hover { opacity: 1 !important; }
+  .sic-act:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+</style>
+</helmet>
+<div style="min-height:100vh;background:#e6e3dc;display:flex;flex-direction:column;align-items:center;gap:30px;padding:44px 24px 56px;box-sizing:border-box;font-family:var(--font-body)">
+
+  <div style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:560px">
+    <div style="font-family:var(--font-heading);font-size:10px;letter-spacing:0.42em;text-transform:uppercase;color:rgba(32,31,29,0.42)">Siccus &middot; hortus siccus</div>
+    <input id="sic-word" type="text" spellcheck="false" autocomplete="off" value="{{ word }}" onInput="{{ onWord }}" onKeyDown="{{ onKey }}" onBlur="{{ commit }}" placeholder="un mot" style="width:100%;border:0;background:transparent;text-align:center;font-family:var(--font-heading);font-weight:400;font-size:58px;line-height:1.1;color:#201f1d;padding:0 0 10px;letter-spacing:0.01em" />
+    <div style="width:96px;height:1px;background:rgba(32,31,29,0.22)"></div>
+  </div>
+
+  <div style="height:min(calc(100vh - 290px), 735px);aspect-ratio:297 / 420;max-width:100%;box-shadow:0 14px 40px rgba(45,43,43,0.20);background:#eee8db">
+    <svg ref="{{ svgRef }}" viewBox="0 0 297 420" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;color:#3b3126;color:{{ ink }}">
+      <rect x="0" y="0" width="297" height="420" fill="#eee8db" />
+      <rect x="0" y="0" width="297" height="420" fill="{{ paper }}" />
+
+      <sc-if value="{{ isMounted }}" hint-placeholder-val="{{ true }}">
+        <g stroke="currentColor" fill="none" opacity="0.5">
+          <rect x="12" y="12" width="273" height="396" stroke-width="0.5" />
+          <path d="M12 34 L34 12" stroke-width="0.5" />
+          <path d="M285 34 L263 12" stroke-width="0.5" />
+          <path d="M12 386 L34 408" stroke-width="0.5" />
+          <path d="M285 386 L263 408" stroke-width="0.5" />
+        </g>
+      </sc-if>
+      <sc-if value="{{ isCard }}" hint-placeholder-val="{{ false }}">
+        <g stroke="currentColor" fill="none">
+          <rect x="10" y="10" width="277" height="400" stroke-width="0.7" opacity="0.55" />
+          <path d="M10 30 H287" stroke-width="0.4" opacity="0.4" />
+          <path d="M10 26 H287" stroke-width="0.4" opacity="0.4" />
+          <circle cx="258" cy="20" r="7.5" stroke-width="0.5" opacity="0.45" />
+        </g>
+        <text x="20" y="23" fill="currentColor" opacity="0.5" font-family="Cormorant Garamond, serif" font-size="6" letter-spacing="0.34" text-transform="uppercase">HERBARIUM SICCUS</text>
+        {{ quarterEl }}
+      </sc-if>
+
+      {{ plant }}
+      {{ details }}
+
+      <sc-if value="{{ withDetails }}" hint-placeholder-val="{{ true }}">
+        <g stroke="currentColor" fill="none" opacity="0.34" stroke-width="0.35" stroke-dasharray="1.6 1.6">
+          <rect x="201" y="42" width="74" height="84" />
+          <rect x="201" y="150" width="74" height="84" />
+        </g>
+        <g fill="currentColor" opacity="0.62" font-family="Lora, serif" font-size="5">
+          <text x="201" y="38">1</text>
+          <text x="201" y="146">2</text>
+        </g>
+        {{ labels }}
+      </sc-if>
+
+      <g stroke="currentColor" fill="none" stroke-width="0.4" opacity="0.6">
+        <path d="M201 272 H246" />
+        <path d="M201 269 V275" />
+        <path d="M210 271 V273.5" />
+        <path d="M219 270.5 V274" />
+        <path d="M228 271 V273.5" />
+        <path d="M237 270.5 V274" />
+        <path d="M246 269 V275" />
+      </g>
+      <text x="201" y="281.5" fill="currentColor" opacity="0.55" font-family="Lora, serif" font-size="3.6" letter-spacing="0.3">5 cm</text>
+
+      <path d="M20 352 H277" stroke="currentColor" stroke-width="0.5" opacity="0.45" fill="none" />
+      {{ cartouche }}
+
+      {{ overlay }}
+    </svg>
+  </div>
+
+  <div style="display:flex;flex-direction:column;align-items:center;gap:18px">
+    <div style="display:flex;gap:26px;align-items:center">
+      <button type="button" class="sic-act" onClick="{{ exportSvg }}" style="opacity:0.42;border:0;background:transparent;cursor:pointer;font-family:var(--font-heading);font-size:13px;letter-spacing:0.22em;text-transform:uppercase;color:#201f1d;padding:4px 2px">SVG</button>
+      <div style="width:1px;height:14px;background:rgba(32,31,29,0.2)"></div>
+      <button type="button" class="sic-act" onClick="{{ exportPng }}" style="opacity:0.42;border:0;background:transparent;cursor:pointer;font-family:var(--font-heading);font-size:13px;letter-spacing:0.22em;text-transform:uppercase;color:#201f1d;padding:4px 2px">PNG</button>
+    </div>
+    <div style="display:flex;gap:20px;align-items:center">
+      <button type="button" class="sic-act" onClick="{{ setMounted }}" style="opacity:{{ optMounted }};border:0;background:transparent;cursor:pointer;font-family:var(--font-body);font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:#201f1d;padding:2px">Planche montée</button>
+      <button type="button" class="sic-act" onClick="{{ setBare }}" style="opacity:{{ optBare }};border:0;background:transparent;cursor:pointer;font-family:var(--font-body);font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:#201f1d;padding:2px">Feuille nue</button>
+      <button type="button" class="sic-act" onClick="{{ setCard }}" style="opacity:{{ optCard }};border:0;background:transparent;cursor:pointer;font-family:var(--font-body);font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:#201f1d;padding:2px">Fiche d'archive</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;word&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Éléa&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;mounted&quot;,&quot;bare&quot;,&quot;card&quot;],&quot;default&quot;:&quot;mounted&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showDetails&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+/* Siccus — planche de botanique déterministe.
+   Math.random() est banni : tout dérive de xmur3(mot) → mulberry32. */
+
+const PALETTES = [
+  { id: 'sepia',  name: 'sépia',        ink: '#4a3520', foliage: '#a3824e', paper: '#f0e7d4' },
+  { id: 'olive',  name: 'olive séché',  ink: '#3b402c', foliage: '#8b8a5e', paper: '#f2eddd' },
+  { id: 'encre',  name: 'encre froide', ink: '#2b3340', foliage: '#798492', paper: '#e8e7e2' },
+  { id: 'tabac',  name: 'tabac',        ink: '#4d3524', foliage: '#a9713f', paper: '#efe3cf' },
+  { id: 'fusain', name: 'fusain',       ink: '#2e2e2c', foliage: '#84837e', paper: '#f2f1ec' }
+];
+const PREFIX = ['Vulpi','Cirsi','Anthe','Lyco','Sperma','Draco','Astra','Cauli','Nervi','Umbri','Salvi','Thala'];
+const SUFFIX = ['anthus','folia','spina','rhiza','carpa','phylla','stemon','nervia'];
+const ROMAN = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+
+function normalize(w) {
+  return String(w || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().trim().replace(/\s+/g, ' ');
+}
+function xmur3(str) {
+  let h = 1779033703 ^ str.length;
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  return function () {
+    h = Math.imul(h ^ (h >>> 16), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    h ^= h >>> 16;
+    return h >>> 0;
+  };
+}
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const r2 = n => Math.round(n * 100) / 100;
+
+function leafPath(type, s) {
+  if (type === 'palmee') {
+    const w = s * 0.16;
+    return [-38, 0, 38].map(a => {
+      const rad = a * Math.PI / 180, L = a === 0 ? s : s * 0.78;
+      const ex = Math.sin(rad) * L, ey = -Math.cos(rad) * L;
+      const px = Math.cos(rad) * w, py = Math.sin(rad) * w;
+      return 'M0,0 Q' + r2(ex / 2 + px) + ',' + r2(ey / 2 + py) + ' ' + r2(ex) + ',' + r2(ey) +
+             ' Q' + r2(ex / 2 - px) + ',' + r2(ey / 2 - py) + ' 0,0';
+    }).join(' ');
+  }
+  const w = type === 'lanceolee' ? s * 0.15 : s * 0.33;
+  return 'M0,0 C' + r2(w) + ',' + r2(-s * 0.28) + ' ' + r2(w) + ',' + r2(-s * 0.7) + ' 0,' + r2(-s) +
+         ' C' + r2(-w) + ',' + r2(-s * 0.7) + ' ' + r2(-w) + ',' + r2(-s * 0.28) + ' 0,0';
+}
+
+class Component extends DCLogic {
+  state = { word: 'Éléa', committed: 'Éléa', variant: 'mounted', settled: false, run: 0 };
+  svgRef = React.createRef();
+
+  componentDidMount() {
+    if (this.props.word) this.setState({ word: this.props.word, committed: this.props.word });
+    if (this.props.variant) this.setState({ variant: this.props.variant });
+    this.settle();
+  }
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  settle() {
+    clearTimeout(this._t);
+    this.setState(s => ({ settled: false, run: s.run + 1 }));
+    this._t = setTimeout(() => this.setState({ settled: true }), 3900);
+  }
+
+  /* ── génération ─────────────────────────────────────────────── */
+  build(word) {
+    const norm = normalize(word) || 'siccus';
+    const seed = xmur3(norm)();
+    const rng = mulberry32(seed);
+    const len = norm.replace(/\s/g, '').length;
+
+    // ORDRE DE CONSOMMATION FIGÉ — tout nouveau paramètre s'ajoute À LA FIN.
+    const g = {};
+    g.angleBase   = 18 + rng() * 17;            // 1
+    g.angleJitter = 0.10 + rng() * 0.10;        // 2
+    g.branchRatio = 0.62 + rng() * 0.16;        // 3
+    g.depth       = Math.min(12, Math.max(8, Math.round(7 + len * 0.45 + rng() * 1.4))); // 4
+    g.curvature   = rng() * 0.4;                // 5
+    g.thickness   = 6 + rng() * 4;              // 6
+    g.phyllotaxy  = ['alterne', 'opposee', 'verticillee'][Math.floor(rng() * 3)]; // 7
+    g.leafType    = ['ovale', 'lanceolee', 'palmee'][Math.floor(rng() * 3)];      // 8
+    g.rootSpread  = 45 + rng() * 25;            // 9
+    const pal     = PALETTES[Math.floor(rng() * PALETTES.length)]; // 10
+    g.leafSize    = g.thickness * 1.15;
+    g.leafDensity = Math.min(1, 0.3 + len / 18);
+
+    const grow = (startAngle, opts) => {
+      const waves = [];
+      let frontier = [{ x: 0, y: 0, a: startAngle, len: 62, w: g.thickness }];
+      let total = 0;
+      const decay = opts.decay, maxD = opts.maxDepth, curv = opts.curv, spread = opts.spread;
+      for (let d = 0; d < maxD && frontier.length; d++) {
+        if (total + frontier.length > 4000) break; // coupe EN PROFONDEUR
+        const wave = [], next = [];
+        for (const n of frontier) {
+          const rad = n.a * Math.PI / 180;
+          const ex = n.x + Math.cos(rad) * n.len, ey = n.y + Math.sin(rad) * n.len;
+          const sign = d % 2 === 0 ? 1 : -1;
+          const off = curv * n.len * 0.45 * sign;
+          const cx = (n.x + ex) / 2 - Math.sin(rad) * off, cy = (n.y + ey) / 2 + Math.cos(rad) * off;
+          wave.push({ d: 'M' + r2(n.x) + ',' + r2(n.y) + ' Q' + r2(cx) + ',' + r2(cy) + ' ' + r2(ex) + ',' + r2(ey),
+                      w: Math.max(0.12, n.w), depth: d, ex: ex, ey: ey, a: n.a, len: n.len });
+          total++;
+          if (d + 1 < maxD) {
+            const three = d >= 2 && rng() < 0.22;
+            const angs = three ? [-spread, spread * (rng() - 0.5) * 0.4, spread] : [-spread * 0.55, spread * 0.55];
+            for (const base of angs) {
+              const j = base * (1 + g.angleJitter * (rng() * 2 - 1));
+              next.push({ x: ex, y: ey, a: n.a + j, len: n.len * (0.72 + g.branchRatio * 0.22), w: n.w * decay });
+            }
+          }
+        }
+        waves.push(wave);
+        frontier = next;
+      }
+      return waves;
+    };
+
+    const aerial = grow(-90, { decay: g.branchRatio, maxDepth: g.depth, curv: g.curvature, spread: g.angleBase });
+    const roots  = grow(90,  { decay: g.branchRatio * 0.86, maxDepth: Math.max(4, g.depth - 2), curv: g.curvature * 1.5, spread: g.rootSpread });
+
+    // feuilles réparties LE LONG des rameaux selon la phyllotaxie
+    const leaves = [];
+    const step = g.phyllotaxy === 'alterne' ? 137.5 : g.phyllotaxy === 'opposee' ? 180 : 120;
+    let phase = 0;
+    const minD = Math.floor(aerial.length * 0.4);
+    for (let d = minD; d < aerial.length; d++) {
+      for (const s of aerial[d]) {
+        if (rng() > g.leafDensity) continue;
+        const nb = g.phyllotaxy === 'verticillee' ? 3 : g.phyllotaxy === 'opposee' ? 2 : 1;
+        for (let k = 0; k < nb; k++) {
+          phase += step;
+          const t = 0.45 + rng() * 0.5;
+          const rad = s.a * Math.PI / 180;
+          const lx = s.ex - Math.cos(rad) * s.len * (1 - t), ly = s.ey - Math.sin(rad) * s.len * (1 - t);
+          const lean = Math.sin(phase * Math.PI / 180);
+          leaves.push({ x: lx, y: ly, angle: s.a + 90 + lean * 62, size: g.leafSize * (0.72 + rng() * 0.5), wave: d, delay: rng() });
+        }
+      }
+    }
+
+    // cadrage : bbox calculée APRÈS génération
+    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    for (const set of [aerial, roots]) for (const wave of set) for (const s of wave) {
+      x0 = Math.min(x0, s.ex); x1 = Math.max(x1, s.ex); y0 = Math.min(y0, s.ey); y1 = Math.max(y1, s.ey);
+    }
+    y0 = Math.min(y0, 0); y1 = Math.max(y1, 0);
+    const bw = (x1 - x0) * 1.16, bh = (y1 - y0) * 1.08;
+    const AX = 22, AY = 40, AW = 168, AH = 290;
+    const sc = Math.min(AW / bw, AH / bh);
+    const tx = AX + AW / 2 - ((x0 + x1) / 2) * sc;
+    const ty = AY + AH / 2 - ((y0 + y1) / 2) * sc;
+
+    // nom latin — épithète dérivé des traits réels
+    const latin = PREFIX[Math.floor(rng() * PREFIX.length)].toLowerCase() +
+                  SUFFIX[Math.floor(rng() * SUFFIX.length)];
+    const epithet = g.curvature > 0.28 ? 'contorta' : g.depth <= 8 ? 'nana'
+                  : g.thickness < 7.5 ? 'gracilis' : g.phyllotaxy === 'alterne' ? 'alterna' : 'robusta';
+    const kinds = ['feuille', 'coupe', 'graine'];
+    const k2 = kinds[1 + Math.floor(rng() * 2)];
+
+    const now = new Date();
+    return {
+      genome: g, pal: pal, aerial: aerial, roots: roots, leaves: leaves, seed: seed,
+      sc: sc, tx: tx, ty: ty,
+      latin: latin.charAt(0).toUpperCase() + latin.slice(1) + ' ' + epithet,
+      specimen: 1000 + (seed % 9000),
+      date: String(now.getDate()).padStart(2, '0') + '.' + ROMAN[now.getMonth()] + '.' + now.getFullYear(),
+      quarter: 'T' + (Math.floor(now.getMonth() / 3) + 1),
+      detail2: k2
+    };
+  }
+
+  plate() {
+    if (this._pw !== this.state.committed) { this._p = this.build(this.state.committed); this._pw = this.state.committed; }
+    return this._p;
+  }
+
+  /* ── exports ────────────────────────────────────────────────── */
+  clean() {
+    const node = this.svgRef.current.cloneNode(true);
+    node.querySelectorAll('path,g,rect,text').forEach(el => {
+      el.style.animation = ''; el.style.opacity = '';
+      if (el.hasAttribute('stroke-dasharray') && el.getAttribute('pathLength') === '1') {
+        el.removeAttribute('stroke-dasharray'); el.removeAttribute('pathLength');
+      }
+    });
+    node.setAttribute('width', '297mm'); node.setAttribute('height', '420mm');
+    return new XMLSerializer().serializeToString(node);
+  }
+  fileName(ext) {
+    const p = this.plate();
+    return 'siccus-' + p.latin.toLowerCase().replace(/\s+/g, '-') + '-' + p.specimen + '.' + ext;
+  }
+  download(url, name) {
+    const a = document.createElement('a');
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  }
+  exportSvg = () => {
+    const blob = new Blob([this.clean()], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    this.download(url, this.fileName('svg'));
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  };
+  exportPng = () => {
+    const svg = this.clean();
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = 297 * 4; c.height = 420 * 4;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      this.download(c.toDataURL('image/png'), this.fileName('png'));
+    };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  };
+
+  /* ── rendu ──────────────────────────────────────────────────── */
+  drawSide(waves, key, ink, total) {
+    return waves.map((wave, i) => React.createElement('g', {
+      key: key + i, stroke: ink, fill: 'none', strokeLinecap: 'round',
+      style: { animation: 'sic-grow 0.5s linear ' + r2(i * (3.1 / Math.max(1, total))) + 's both' }
+    }, wave.map((s, j) => React.createElement('path', {
+      key: j, d: s.d, strokeWidth: r2(s.w), pathLength: 1, strokeDasharray: '1'
+    }))));
+  }
+
+  detailOrgan(kind, cx, cy, p, ink, wash) {
+    const g = p.genome;
+    if (kind === 'feuille') {
+      const s = 64;
+      return React.createElement('g', { key: 'd1', transform: 'translate(' + cx + ',' + r2(cy + s / 2) + ')' }, [
+        React.createElement('path', { key: 'b', d: leafPath(g.leafType, s), fill: wash, fillOpacity: 0.4, stroke: ink, strokeWidth: 0.45 }),
+        React.createElement('path', { key: 'v', d: 'M0,0 L0,' + -s * 0.94, stroke: ink, strokeWidth: 0.3, opacity: 0.6, fill: 'none' }),
+        React.createElement('path', { key: 'p', d: 'M0,0 L0,4', stroke: ink, strokeWidth: 0.6, fill: 'none' })
+      ]);
+    }
+    if (kind === 'coupe') {
+      const rings = [22, 16, 10.5, 5];
+      const ticks = [];
+      for (let i = 0; i < 16; i++) {
+        const a = (i / 16) * Math.PI * 2;
+        ticks.push(React.createElement('path', { key: 't' + i, fill: 'none', stroke: ink, strokeWidth: 0.25, opacity: 0.5,
+          d: 'M' + r2(Math.cos(a) * 10.5) + ',' + r2(Math.sin(a) * 10.5) + ' L' + r2(Math.cos(a) * 16) + ',' + r2(Math.sin(a) * 16) }));
+      }
+      return React.createElement('g', { key: 'd2', transform: 'translate(' + cx + ',' + cy + ')' },
+        rings.map((r, i) => React.createElement('circle', { key: 'r' + i, r: r, fill: i === 1 ? wash : 'none', fillOpacity: 0.28, stroke: ink, strokeWidth: i === 0 ? 0.6 : 0.35 })).concat(ticks));
+    }
+    return React.createElement('g', { key: 'd2', transform: 'translate(' + cx + ',' + cy + ')' }, [
+      React.createElement('ellipse', { key: 'o', rx: 15, ry: 21, fill: wash, fillOpacity: 0.35, stroke: ink, strokeWidth: 0.55 }),
+      React.createElement('path', { key: 'h', d: 'M-6,-12 Q4,0 -3,13', fill: 'none', stroke: ink, strokeWidth: 0.35, opacity: 0.7 }),
+      React.createElement('circle', { key: 'p', cx: 0, cy: 17, r: 1.4, fill: ink, opacity: 0.8 })
+    ]);
+  }
+
+  renderVals() {
+    const p = this.plate();
+    const ink = p.pal.ink, wash = p.pal.foliage;
+    const variant = this.state.variant;
+    const withDetails = this.props.showDetails !== false;
+    const total = p.aerial.length;
+    const key = this.state.committed + '|' + this.state.run;
+
+    const plant = React.createElement('g', { key: key }, [
+      React.createElement('defs', { key: 'defs' }, [
+        React.createElement('filter', { key: 'ink', id: 'sic-ink' }, [
+          React.createElement('feTurbulence', { key: 't', type: 'fractalNoise', baseFrequency: '0.06', numOctaves: 2, seed: p.seed % 1000, result: 'n' }),
+          React.createElement('feDisplacementMap', { key: 'd', in: 'SourceGraphic', in2: 'n', scale: 0.7, xChannelSelector: 'R', yChannelSelector: 'G' })
+        ]),
+        React.createElement('filter', { key: 'grain', id: 'sic-grain' }, [
+          React.createElement('feTurbulence', { key: 't', type: 'fractalNoise', baseFrequency: '0.9', numOctaves: 3, seed: 7 }),
+          React.createElement('feColorMatrix', { key: 'c', type: 'saturate', values: '0' })
+        ])
+      ]),
+      React.createElement('g', {
+        key: 'subject', transform: 'translate(' + r2(p.tx) + ',' + r2(p.ty) + ') scale(' + r2(p.sc) + ')',
+        filter: this.state.settled ? 'url(#sic-ink)' : 'none'
+      }, [
+        React.createElement('g', { key: 'a' }, this.drawSide(p.aerial, 'a', ink, total)),
+        React.createElement('g', { key: 'r' }, this.drawSide(p.roots, 'r', ink, total)),
+        React.createElement('g', { key: 'l' }, p.leaves.map((l, i) => React.createElement('path', {
+          key: i, d: leafPath(p.genome.leafType, l.size),
+          transform: 'translate(' + r2(l.x) + ',' + r2(l.y) + ') rotate(' + r2(l.angle) + ')',
+          fill: wash, fillOpacity: 0.42, stroke: ink, strokeWidth: 0.5,
+          style: { animation: 'sic-leaf 0.7s ease-out ' + r2(l.wave * (3.1 / Math.max(1, total)) + 0.35 + l.delay * 0.3) + 's both' }
+        })))
+      ]),
+      React.createElement('path', {
+        key: 'ground', d: 'M22 ' + r2(p.ty) + ' H190', stroke: ink, strokeWidth: 0.45, opacity: 0.5, fill: 'none',
+        strokeDasharray: '6 2.5', style: { animation: 'sic-in 1s ease-out 0.1s both' }
+      })
+    ]);
+
+    const details = withDetails ? React.createElement('g', { key: 'det' + key, style: { animation: 'sic-in 1.2s ease-out 1.6s both' } }, [
+      this.detailOrgan('feuille', 238, 84, p, ink, wash),
+      this.detailOrgan(p.detail2, 238, 194, p, ink, wash)
+    ]) : null;
+
+    const overlay = React.createElement('rect', {
+      key: 'grain', x: 0, y: 0, width: 297, height: 420, filter: 'url(#sic-grain)',
+      style: { opacity: this.state.settled ? 0.11 : 0, transition: 'opacity 0.5s ease-out', mixBlendMode: 'multiply', pointerEvents: 'none' }
+    });
+
+    const scaleLabel = { feuille: 'feuille isolée ×8', coupe: 'coupe de tige ×8', graine: 'graine ×4' };
+    const T = (k, x, y, t, o) => React.createElement('text', Object.assign({
+      key: k, x: x, y: y, fill: 'currentColor', fontFamily: 'Cormorant Garamond, serif'
+    }, o), t);
+
+    const cartouche = React.createElement('g', { key: 'cart' }, [
+      T('w', 20, 368, (this.state.committed || '').toLocaleUpperCase(), { fontSize: 7, letterSpacing: 2.2, opacity: 0.95 }),
+      T('l', 20, 384, p.latin, { fontSize: 10.5, fontStyle: 'italic', opacity: 0.9 }),
+      T('s', 20, 396, 'Siccus n° ' + p.specimen + ' — ' + p.date, { fontFamily: 'Lora, serif', fontSize: 3.9, letterSpacing: 0.5, opacity: 0.62 }),
+      T('p', 277, 396, p.pal.name, { textAnchor: 'end', fontSize: 4.2, fontStyle: 'italic', letterSpacing: 0.3, opacity: 0.5 })
+    ]);
+
+    const labels = withDetails ? React.createElement('g', { key: 'lab', opacity: 0.5 }, [
+      T('l1', 208, 38, scaleLabel.feuille, { fontSize: 4.2, fontStyle: 'italic' }),
+      T('l2', 208, 146, scaleLabel[p.detail2], { fontSize: 4.2, fontStyle: 'italic' })
+    ]) : null;
+
+    const quarterEl = T('q', 258, 22, p.quarter, { textAnchor: 'middle', fontSize: 4.4, letterSpacing: 0.2, opacity: 0.5 });
+
+    return {
+      word: this.state.word,
+      cartouche: cartouche,
+      labels: labels,
+      quarterEl: quarterEl,
+      paper: p.pal.paper,
+      ink: ink,
+      plant: plant,
+      details: details,
+      overlay: overlay,
+      withDetails: withDetails,
+      isMounted: variant === 'mounted',
+      isCard: variant === 'card',
+      optMounted: variant === 'mounted' ? 0.95 : 0.32,
+      optBare: variant === 'bare' ? 0.95 : 0.32,
+      optCard: variant === 'card' ? 0.95 : 0.32,
+      svgRef: this.svgRef,
+      onWord: e => this.setState({ word: e.target.value }),
+      onKey: e => { if (e.key === 'Enter') { e.target.blur(); } },
+      commit: () => {
+        const w = this.state.word.trim();
+        if (!w || w === this.state.committed) return;
+        this.setState({ committed: w }, () => this.settle());
+      },
+      setMounted: () => this.setState({ variant: 'mounted' }),
+      setBare: () => this.setState({ variant: 'bare' }),
+      setCard: () => this.setState({ variant: 'card' }),
+      exportSvg: this.exportSvg,
+      exportPng: this.exportPng
+    };
+  }
+}
+</script>
+</body>
+</html>
