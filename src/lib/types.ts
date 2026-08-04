@@ -73,9 +73,20 @@ export type LeafShape = {
 export type Organ = {
   x: number
   y: number
+  /** Direction dans laquelle pointe la feuille, en degrés. */
   ang: number
   size: number
   wave: number
+  /** Angle phyllotaxique cumulé au nœud porteur. Décide du raccourci. */
+  roll: number
+  /**
+   * Raccourci de la largeur du limbe, 0,18 à 1. Une feuille qui pointe vers
+   * l'observateur se voit de profil — c'est ce facteur qui empêche le feuillage
+   * de se lire comme une planche d'autocollants.
+   */
+  widthScale: number
+  /** La feuille montre sa face inférieure : nervures saillantes, hachures pâles. */
+  underside: boolean
   shape: LeafShape
 }
 

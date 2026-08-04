@@ -10,6 +10,21 @@ import type { Dot, Genome, LeafMargin, LeafType, Mark, Organ, Point, Stroke } fr
  * `buildPlate`, jamais partagé, et il est figé en données immuables au retour.
  * Construire quatre listes par `concat` successifs coûterait O(n²) pour ~2000 traits.
  */
+
+export type OrganSpec = {
+  x: number
+  y: number
+  ang: number
+  size: number
+  wave: number
+  roll: number
+  widthScale: number
+  underside: boolean
+  kind?: LeafType
+  margin?: LeafMargin
+  veins?: number
+}
+
 export type Sketch = {
   readonly strokes: Stroke[]
   readonly organs: Organ[]
@@ -20,17 +35,8 @@ export type Sketch = {
   push(pts: readonly Point[], w: number, wave: number, pass?: number): void
   /** Une tige : passe principale + repasse claire si elle est assez épaisse. */
   stemStroke(s: Stem, w: number, wave: number): void
-  /** Une feuille posée sur un rameau. */
-  organ(
-    x: number,
-    y: number,
-    ang: number,
-    size: number,
-    wave: number,
-    kind?: LeafType,
-    margin?: LeafMargin,
-    veins?: number,
-  ): void
+  /** Une feuille posée à un nœud. */
+  organ(spec: OrganSpec): void
 }
 
 export function createSketch(genome: Genome, rng: Rng): Sketch {
@@ -54,20 +60,24 @@ export function createSketch(genome: Genome, rng: Rng): Sketch {
       if (w > genome.thickness * 0.34) this.push(s.pts, w * 0.42, wave, 1)
     },
 
-    organ(x, y, ang, size, wave, kind, margin, veins) {
+    organ(spec) {
       organs.push({
-        x,
-        y,
-        ang,
-        size,
-        wave,
+        x: spec.x,
+        y: spec.y,
+        ang: spec.ang,
+        size: spec.size,
+        wave: spec.wave,
+        roll: spec.roll,
+        widthScale: spec.widthScale,
+        underside: spec.underside,
         shape: leafOrgan(
-          kind ?? genome.organType,
-          margin ?? genome.organMargin,
-          size,
+          spec.kind ?? genome.organType,
+          spec.margin ?? genome.organMargin,
+          spec.size,
           rng,
           genome.leafBend,
-          veins,
+          spec.veins,
+          spec.widthScale,
         ),
       })
     },

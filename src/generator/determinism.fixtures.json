@@ -1,110 +1,110 @@
 {
-  "note": "Empreintes du balisage écrit. La GÉOMÉTRIE sous-jacente (branches, positions et tailles de feuilles, cadrage, nomenclature) a été validée par diff octet à octet contre _legacy/Siccus v2.dc.html. Ne jamais régénérer ce fichier pour faire passer un test.",
+  "note": "Empreintes du balisage écrit. Rupture assumée du 04.VIII.2026 : passage au moteur d'axes à nœuds et au rendu de taille-douce. Toutes les plantes antérieures ont changé d'aspect — c'est délibéré et daté. Ne jamais régénérer ce fichier pour faire passer un test.",
   "collectedOn": "2026-08-04T12:00:00Z",
   "plates": {
     "Éléa": {
       "seed": 3297031088,
       "port": "grimpant",
       "palette": "fusain",
-      "latin": "Anthepogon robusta",
+      "latin": "Cornispina robusta",
       "specimen": 8088,
-      "markup": "73ce2ab7372cc0f6"
+      "markup": "8ff5a964a6ec9ea8"
     },
     "Adrien": {
       "seed": 2862143470,
       "port": "rosette",
       "palette": "sepia",
-      "latin": "Vulpirhiza robusta",
+      "latin": "Eryaphylla robusta",
       "specimen": 9470,
-      "markup": "750b23420cf29f78"
+      "markup": "4221622570ab97e3"
     },
     "Ana": {
       "seed": 2174885503,
       "port": "rosette",
       "palette": "sepia",
-      "latin": "Eryarhiza robusta",
+      "latin": "Vulpianthus robusta",
       "specimen": 9503,
-      "markup": "3d9e382ac478e1fb"
+      "markup": "e3a1ee25294babbb"
     },
     "Constantinople": {
       "seed": 2720249986,
       "port": "rosette",
       "palette": "sepia",
-      "latin": "Spermacarpa gracilis",
+      "latin": "Cirsipogon gracilis",
       "specimen": 9986,
-      "markup": "d146e037bf876b53"
+      "markup": "3191607746c1344c"
     },
     "siccus": {
       "seed": 252858942,
       "port": "grimpant",
       "palette": "olive",
-      "latin": "Anthespina gracilis",
+      "latin": "Eryastemon gracilis",
       "specimen": 4942,
-      "markup": "94f866fa9080fbb5"
+      "markup": "d5e82a865522a5b1"
     },
     "fougere test": {
       "seed": 321547615,
       "port": "fougere",
       "palette": "fusain",
-      "latin": "Cornirhiza robusta",
+      "latin": "Caulicarpa robusta",
       "specimen": 5615,
-      "markup": "2d5035570f5c79b5"
+      "markup": "038cd8d337f6d650"
     },
     "olive": {
       "seed": 1221160052,
       "port": "fougere",
       "palette": "olive",
-      "latin": "Antherhiza gracilis",
+      "latin": "Eryafolia gracilis",
       "specimen": 5052,
-      "markup": "223637503b073096"
+      "markup": "a7a66e98b482c439"
     },
     "graminee x": {
       "seed": 1792077926,
       "port": "rosette",
       "palette": "tabac",
-      "latin": "Antherhiza alterna",
+      "latin": "Caulicalyx alterna",
       "specimen": 7926,
-      "markup": "3441050616e6cb59"
+      "markup": "630b459ad724b9ca"
     },
     "arbuste": {
       "seed": 3108312960,
       "port": "grimpant",
       "palette": "encre",
-      "latin": "Anthenervia robusta",
+      "latin": "Cornispina robusta",
       "specimen": 1960,
-      "markup": "cd3210a5c3384265"
+      "markup": "dbf2d9f297ec850f"
     },
     "zzz": {
       "seed": 2703109331,
       "port": "fougere",
       "palette": "sepia",
-      "latin": "Thalafolia contorta",
+      "latin": "Vulpispina contorta",
       "specimen": 5331,
-      "markup": "8012e2178a9ce6df"
+      "markup": "f99498104f819398"
     },
     "a": {
       "seed": 519299066,
       "port": "arbustif",
       "palette": "olive",
-      "latin": "Lycospina nana",
+      "latin": "Cornirhiza nana",
       "specimen": 9066,
-      "markup": "7d9833c94e1455a3"
+      "markup": "826e03163bfe983c"
     },
     "Marie-Lou": {
       "seed": 3086524573,
       "port": "graminee",
       "palette": "fusain",
-      "latin": "Caulinervia gracilis",
+      "latin": "Antherhiza gracilis",
       "specimen": 2573,
-      "markup": "cf1e3a38bdbf8145"
+      "markup": "de7fd2f37dbb402a"
     },
     "José": {
       "seed": 3239436999,
       "port": "arbustif",
       "palette": "tabac",
-      "latin": "Vulpiphylla robusta",
+      "latin": "Eryanervia robusta",
       "specimen": 4999,
-      "markup": "7d3cb25ef9019b90"
+      "markup": "04c5c02b433a3dee"
     }
   }
 }

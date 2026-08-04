@@ -79,6 +79,12 @@ export function leafOrgan(
   rng: Rng,
   bend: number,
   veinCount = 6,
+  /**
+   * Raccourci de la largeur du limbe. Une feuille vue de profil est étroite mais
+   * garde ses nervures : c'est ce que voit l'œil, et c'est ce qui distingue un
+   * feuillage d'une planche d'autocollants.
+   */
+  widthScale = 1,
 ): LeafShape {
   const n = MID_STEPS
   const out = emission(size)
@@ -97,7 +103,7 @@ export function leafOrgan(
   const teeth = margin === 'dentee' ? 11 : margin === 'lobee' ? 5 : 0
   const amp = margin === 'dentee' ? 0.13 : margin === 'lobee' ? 0.26 : 0
   const wFn = (t: number): number => {
-    const base = profile(kind, t) * size
+    const base = profile(kind, t) * size * widthScale
     const m = teeth ? 1 + amp * Math.sin(t * teeth * Math.PI * 2) : 1
     return Math.max(0.05, base * m + jit(rng, size * 0.006))
   }
