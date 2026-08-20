@@ -2,6 +2,10 @@
   "name": "siccus",
   "private": true,
   "version": "1.0.0",
+  "packageManager": "pnpm@11.21.0",
+  "engines": {
+    "node": ">=22.13"
+  },
   "type": "module",
   "description": "Un mot, une planche d'herbier déterministe.",
   "scripts": {
